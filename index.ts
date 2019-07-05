@@ -33,7 +33,7 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         let S = (document.querySelector(`#osc${i + 1}-gain-sustain`)! as HTMLInputElement).value;
         let R = (document.querySelector(`#osc${i + 1}-gain-release`)! as HTMLInputElement).value;
 
-        let m = parseFloat(M);
+        let m = gain(M);
         let a = envelope(A);
         let s = envelope(S);
         let r = envelope(R);
@@ -61,6 +61,10 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
  */
 function envelope(value: string) {
     return 2 ** (parseFloat(value) / Math.E);
+}
+
+function gain(value: string) {
+    return parseFloat(value) ** Math.E;
 }
 
 function freq_from_note(note: number) {
