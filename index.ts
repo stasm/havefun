@@ -90,7 +90,9 @@ if (navigator.requestMIDIAccess) {
 
 function on_midi_message(message: WebMidi.MIDIMessageEvent) {
     let [command, note, velocity] = message.data;
-    switch (command) {
+    switch (command & 0xf0) {
+        case 240:
+            break;
         case 144: {
             let button = document.querySelector(`button.key[data-note="${note}"]`)!;
             if (velocity > 0) {
@@ -100,5 +102,7 @@ function on_midi_message(message: WebMidi.MIDIMessageEvent) {
                 button.classList.remove("pressed");
             }
         }
+        default:
+            console.log(command, note, velocity);
     }
 }
