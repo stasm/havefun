@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<title>Have Fun Audio Editor</title>
+<style>
+    body {
+        background: #eee;
+    }
+
+    h2 {
+        margin-top: 0;
+    }
+
+    .group {
+        background: #eee;
+        border: 2px groove #fff;
+        padding: 5px;
+    }
+
+    .row {
+        display: flex;
+        flex-flow: row wrap;
+    }
+
+    .slider > * {
+        display: block;
+        text-align: center;
+    }
+
+    .slider > input {
+        margin: 35px -25px;
+        transform: rotate(-90deg);
+        width: 100px;
+        height: 50px;
+    }
+
+    .key.white {
+        background: #fff;
+        width: 30px;
+        height: 90px;
+    }
+    .key.black {
+        background: #111;
+        width: 30px;
+        height: 60px;
+        margin: -10px -15px;
+        z-index: 2;
+    }
+</style>
+<body>
+    <h1>Have Fun Audio Editor</h1>
+    <div class="row">
+        <div class="group">
+            <h2>Oscillator 1</h2>
+            <div class="row">
+                <div class="group">
+                    <label><input type="checkbox" /> Frequency Envelope</label>
+                    <div class="row">
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Atck</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Sust</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Rels</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="group">
+                    <label><input type="checkbox" /> Gain Envelope</label>
+                    <div class="row">
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Atck</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Sust</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Rels</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="group">
+                    <label><input type="checkbox" /> Filter</label>
+                    <select>
+                        <option>Lowpass</option>
+                        <option>Highpass</option>
+                        <option>Bandpass</option>
+                    </select>
+                    <div class="row">
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Freq.</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Q</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="group">
+                    <label><input type="checkbox" /> LFO</label>
+                    <div class="row">
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Amt.</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Freq.</label>
+                        </div>
+                        <div>
+                            <div>
+                                <label><input type="checkbox" />Freq.</label>
+                            </div>
+                            <div>
+                                <label><input type="checkbox" />Gain</label>
+                            </div>
+                            <div>
+                                <label><input type="checkbox" />Filter</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <h2>Oscillator 2</h2>
+            <div class="row">
+                <div class="group">
+                    <label><input type="checkbox" /> Frequency Envelope</label>
+                    <div class="row">
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Atck</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Sust</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Rels</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="group">
+                    <label><input type="checkbox" /> Gain Envelope</label>
+                    <div class="row">
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Atck</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Sust</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Rels</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="group">
+                    <label><input type="checkbox" /> Filter</label>
+                    <select>
+                        <option>Lowpass</option>
+                        <option>Highpass</option>
+                        <option>Bandpass</option>
+                    </select>
+                    <div class="row">
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Freq.</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Q</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="group">
+                    <label><input type="checkbox" /> LFO</label>
+                    <div class="row">
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Amt.</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Freq.</label>
+                        </div>
+                        <div>
+                            <div>
+                                <label><input type="checkbox" />Freq.</label>
+                            </div>
+                            <div>
+                                <label><input type="checkbox" />Gain</label>
+                            </div>
+                            <div>
+                                <label><input type="checkbox" />Filter</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <h2>Frequency</h2>
+            <div class="row">
+                <button class="key white" data-freq="130.8128"></button>
+                <button class="key black" data-freq="138.5913"></button>
+                <button class="key white" data-freq="146.8324"></button>
+                <button class="key black" data-freq="155.5635	"></button>
+                <button class="key white" data-freq="164.8138"></button>
+                <button class="key white" data-freq="174.6141"></button>
+                <button class="key black" data-freq="184.9972"></button>
+                <button class="key white" data-freq="195.9977	"></button>
+                <button class="key black" data-freq="207.6523"></button>
+                <button class="key white" data-freq="220.0000"></button>
+                <button class="key black" data-freq="233.0819"></button>
+                <button class="key white" data-freq="246.9417"></button>
+                <button class="key white" data-freq="261.6256"></button>
+                <button class="key black" data-freq="277.1826"></button>
+                <button class="key white" data-freq="293.6648"></button>
+                <button class="key black" data-freq="311.1270"></button>
+                <button class="key white" data-freq="329.6276"></button>
+                <button class="key white" data-freq="349.2282"></button>
+                <button class="key black" data-freq="369.9944"></button>
+                <button class="key white" data-freq="391.9954"></button>
+                <button class="key black" data-freq="415.3047"></button>
+                <button class="key white" data-freq="440.0000"></button>
+                <button class="key black" data-freq="466.1638"></button>
+                <button class="key white" data-freq="493.8833"></button>
+                <button class="key white" data-freq="523.2511"></button>
+                <button class="key black" data-freq="554.3653"></button>
+                <button class="key white" data-freq="587.3295"></button>
+                <button class="key black" data-freq="622.2540"></button>
+                <button class="key white" data-freq="659.2551"></button>
+                <button class="key white" data-freq="698.4565"></button>
+                <button class="key black" data-freq="739.9888"></button>
+                <button class="key white" data-freq="783.9909"></button>
+                <button class="key black" data-freq="830.6094"></button>
+                <button class="key white" data-freq="880.0000"></button>
+                <button class="key black" data-freq="932.3275"></button>
+                <button class="key white" data-freq="987.7666"></button>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="index.js"></script>
+</body>

@@ -1,0 +1,18 @@
+{
+    "name": "havefun-audio",
+    "version": "0.0.1",
+    "private": true,
+    "description": "Have Fun Audio Editor",
+    "scripts": {
+        "serve": "live-server --port=1234 --no-browser --quiet",
+        "compile:watch": "tsc --watch -p .",
+        "start": "npm-run-all --parallel compile:watch serve"
+    },
+    "author": "Staś Małolepszy <stas@piesku.com>",
+    "license": "ISC",
+    "devDependencies": {
+        "live-server": "1.2.1",
+        "npm-run-all": "4.1.5",
+        "typescript": "3.5.2"
+    }
+}
