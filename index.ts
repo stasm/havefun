@@ -25,34 +25,54 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
     let time = audio.currentTime + offset;
 
     for (let [i, wave] of instr.waves.entries()) {
-        let M = (document.querySelector(`#osc${i + 1}-gain-master`)! as HTMLInputElement).value;
-        let A = (document.querySelector(`#osc${i + 1}-gain-attack`)! as HTMLInputElement).value;
-        let S = (document.querySelector(`#osc${i + 1}-gain-sustain`)! as HTMLInputElement).value;
-        let R = (document.querySelector(`#osc${i + 1}-gain-release`)! as HTMLInputElement).value;
-        let D = (document.querySelector(`#osc${i + 1}-freq-detune`)! as HTMLInputElement).value;
+        let GM = (document.querySelector(`#osc${i + 1}-gain-master`)! as HTMLInputElement).value;
+        let GA = (document.querySelector(`#osc${i + 1}-gain-attack`)! as HTMLInputElement).value;
+        let GS = (document.querySelector(`#osc${i + 1}-gain-sustain`)! as HTMLInputElement).value;
+        let GR = (document.querySelector(`#osc${i + 1}-gain-release`)! as HTMLInputElement).value;
 
-        let m = (parseInt(M) / 9) ** 3;
-        let a = (parseInt(A) / 9) ** 3;
-        let s = (parseInt(S) / 9) ** 3;
-        let r = (parseInt(R) / 6) ** 3;
-        let d = parseInt(D) ** 3;
+        let gm = (parseInt(GM) / 9) ** 3;
+        let ga = (parseInt(GA) / 9) ** 3;
+        let gs = (parseInt(GS) / 9) ** 3;
+        let gr = (parseInt(GR) / 6) ** 3;
 
-        wave.osc.frequency.setValueAtTime(freq, time);
-        wave.osc.detune.setValueAtTime(d, time);
         wave.amp.gain.cancelScheduledValues(time);
 
         let end;
         let gain_env = document.querySelector(`#osc${i + 1}-gain-env`)! as HTMLInputElement;
         if (gain_env.checked) {
             wave.amp.gain.linearRampToValueAtTime(0, time);
-            wave.amp.gain.linearRampToValueAtTime(m, time + a);
-            wave.amp.gain.setValueAtTime(m, time + a + s);
-            wave.amp.gain.exponentialRampToValueAtTime(0.00001, time + a + s + r);
-            end = time + a + s + r;
+            wave.amp.gain.linearRampToValueAtTime(gm, time + ga);
+            wave.amp.gain.setValueAtTime(gm, time + ga + gs);
+            wave.amp.gain.exponentialRampToValueAtTime(0.00001, time + ga + gs + gr);
+            end = time + ga + gs + gr;
         } else {
-            wave.amp.gain.linearRampToValueAtTime(m, time);
+            wave.amp.gain.linearRampToValueAtTime(gm, time);
             end = time + 1;
         }
+
+        let FD = (document.querySelector(`#osc${i + 1}-freq-detune`)! as HTMLInputElement).value;
+        let FA = (document.querySelector(`#osc${i + 1}-freq-attack`)! as HTMLInputElement).value;
+        let FS = (document.querySelector(`#osc${i + 1}-freq-sustain`)! as HTMLInputElement).value;
+        let FR = (document.querySelector(`#osc${i + 1}-freq-release`)! as HTMLInputElement).value;
+
+        let fd = parseInt(FD) ** 3;
+        let fa = (parseInt(FA) / 9) ** 3;
+        let fs = (parseInt(FS) / 9) ** 3;
+        let fr = (parseInt(FR) / 6) ** 3;
+
+        wave.osc.frequency.cancelScheduledValues(time);
+        wave.osc.detune.setValueAtTime(fd, time);
+
+        let freq_env = document.querySelector(`#osc${i + 1}-freq-env`)! as HTMLInputElement;
+        if (freq_env.checked) {
+            wave.osc.frequency.linearRampToValueAtTime(0, time);
+            wave.osc.frequency.linearRampToValueAtTime(freq, time + fa);
+            wave.osc.frequency.setValueAtTime(freq, time + fa + fs);
+            wave.osc.frequency.exponentialRampToValueAtTime(0.00001, time + fa + fs + fr);
+        } else {
+            wave.osc.frequency.setValueAtTime(freq, time);
+        }
+
         wave.osc.start();
         wave.osc.stop(end);
     }
