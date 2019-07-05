@@ -31,7 +31,7 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         let R = (document.querySelector(`#osc${i + 1}-gain-release`)! as HTMLInputElement).value;
         let D = (document.querySelector(`#osc${i + 1}-freq-detune`)! as HTMLInputElement).value;
 
-        let m = parseFloat(M) ** Math.E;
+        let m = (parseInt(M) / 9) ** 3;
         let a = (parseInt(A) / 9) ** 3;
         let s = (parseInt(S) / 9) ** 3;
         let r = (parseInt(R) / 6) ** 3;
