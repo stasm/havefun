@@ -14,7 +14,7 @@ function create_instrument(): Instrument {
     return {osc1, gain1};
 }
 
-function play(instr: Instrument, freq: number, offset: number) {
+function play_instr(instr: Instrument, freq: number, offset: number) {
     let time = audio.currentTime + offset;
 
     instr.osc1.frequency.setValueAtTime(freq, time);
@@ -52,14 +52,53 @@ function envelope(value: string) {
     return 2 ** (parseFloat(value) / Math.E);
 }
 
-function play_key(evt: Event) {
-    let freq = (evt.currentTarget! as Element).getAttribute("data-freq")!;
+function freq_from_note(note: number) {
+    return 440 * 2 ** ((note - 69) / 12);
+}
+
+function play_note(note: number) {
+    let freq = freq_from_note(note);
     let instr = create_instrument();
-    let end = play(instr, parseFloat(freq), 0);
+    let end = play_instr(instr, freq, 0);
     instr.osc1.start();
     instr.osc1.stop(end);
 }
 
+function play_key(evt: Event) {
+    let note = (evt.currentTarget! as Element).getAttribute("data-note")!;
+    play_note(parseInt(note));
+}
+
 for (let key of document.querySelectorAll(".key")) {
     key.addEventListener("click", play_key);
+}
+
+async function request_midi() {
+    try {
+        let midi = await navigator.requestMIDIAccess();
+        for (let input of midi.inputs.values()) {
+            input.onmidimessage = on_midi_message;
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+if (navigator.requestMIDIAccess) {
+    request_midi();
+}
+
+function on_midi_message(message: WebMidi.MIDIMessageEvent) {
+    let [command, note, velocity] = message.data;
+    switch (command) {
+        case 144: {
+            let button = document.querySelector(`button.key[data-note="${note}"]`)!;
+            if (velocity > 0) {
+                play_note(note);
+                button.classList.add("pressed");
+            } else {
+                button.classList.remove("pressed");
+            }
+        }
+    }
 }
