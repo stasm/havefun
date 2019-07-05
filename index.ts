@@ -1,46 +1,57 @@
 let audio = new AudioContext();
 
 interface Instrument {
-    osc1: OscillatorNode;
-    gain1: GainNode;
+    waves: Array<Wave>;
+}
+
+interface Wave {
+    osc: OscillatorNode;
+    amp: GainNode;
 }
 
 function create_instrument(): Instrument {
-    let osc1 = audio.createOscillator();
-    let gain1 = audio.createGain();
-    osc1.connect(gain1);
-    gain1.connect(audio.destination);
-
-    return {osc1, gain1};
+    let waves: Array<Wave> = [];
+    for (let i = 0; i < 2; i++) {
+        let osc = audio.createOscillator();
+        let amp = audio.createGain();
+        osc.connect(amp);
+        amp.connect(audio.destination);
+        waves.push({osc, amp});
+    }
+    return {waves};
 }
 
 function play_instr(instr: Instrument, freq: number, offset: number) {
     let time = audio.currentTime + offset;
 
-    instr.osc1.frequency.setValueAtTime(freq, time);
-    instr.gain1.gain.cancelScheduledValues(time);
+    for (let [i, wave] of instr.waves.entries()) {
+        wave.osc.frequency.setValueAtTime(freq, time);
+        wave.amp.gain.cancelScheduledValues(time);
 
-    let master1 = (document.querySelector("#osc1-gain-master")! as HTMLInputElement).value;
-    let m1 = parseFloat(master1);
+        let M = (document.querySelector(`#osc${i + 1}-gain-master`)! as HTMLInputElement).value;
+        let A = (document.querySelector(`#osc${i + 1}-gain-attack`)! as HTMLInputElement).value;
+        let S = (document.querySelector(`#osc${i + 1}-gain-sustain`)! as HTMLInputElement).value;
+        let R = (document.querySelector(`#osc${i + 1}-gain-release`)! as HTMLInputElement).value;
 
-    let osc1_gain_env = document.querySelector("#osc1-gain-env")! as HTMLInputElement;
-    if (osc1_gain_env.checked) {
-        let a_val = (document.querySelector("#osc1-gain-attack")! as HTMLInputElement).value;
-        let s_val = (document.querySelector("#osc1-gain-sustain")! as HTMLInputElement).value;
-        let r_val = (document.querySelector("#osc1-gain-release")! as HTMLInputElement).value;
+        let m = parseFloat(M);
+        let a = envelope(A);
+        let s = envelope(S);
+        let r = envelope(R);
 
-        let a = envelope(a_val);
-        let s = envelope(s_val);
-        let r = envelope(r_val);
-
-        instr.gain1.gain.linearRampToValueAtTime(0, time);
-        instr.gain1.gain.linearRampToValueAtTime(m1, time + a);
-        instr.gain1.gain.setValueAtTime(m1, time + a + s);
-        instr.gain1.gain.exponentialRampToValueAtTime(0.00001, time + a + s + r);
-        return time + a + s + r;
-    } else {
-        instr.gain1.gain.linearRampToValueAtTime(m1, time);
-        return time + 1;
+        let end;
+        let gain_env = document.querySelector(`#osc${i + 1}-gain-env`)! as HTMLInputElement;
+        if (gain_env.checked) {
+            wave.amp.gain.linearRampToValueAtTime(0, time);
+            wave.amp.gain.linearRampToValueAtTime(m, time + a);
+            wave.amp.gain.setValueAtTime(m, time + a + s);
+            wave.amp.gain.exponentialRampToValueAtTime(0.00001, time + a + s + r);
+            end = time + a + s + r;
+        } else {
+            wave.amp.gain.linearRampToValueAtTime(m, time);
+            end = time + 1;
+        }
+        wave.osc.start();
+        wave.osc.stop(end);
     }
 }
 
@@ -59,9 +70,7 @@ function freq_from_note(note: number) {
 function play_note(note: number) {
     let freq = freq_from_note(note);
     let instr = create_instrument();
-    let end = play_instr(instr, freq, 0);
-    instr.osc1.start();
-    instr.osc1.stop(end);
+    play_instr(instr, freq, 0);
 }
 
 function play_key(evt: Event) {

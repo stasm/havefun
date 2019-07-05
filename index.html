@@ -55,29 +55,17 @@
             <h2>Oscillator 1</h2>
             <div class="row">
                 <div class="group">
-                    <label><input type="checkbox" id="osc1-freq-env" /> Frequency Envelope</label>
+                    <label>Gain</label>
                     <div class="row">
                         <div class="slider">
-                            <input type="range" id="osc1-freq-attack" />
-                            <label>Atck</label>
-                        </div>
-                        <div class="slider">
-                            <input type="range" id="osc1-freq-sustain" />
-                            <label>Sust</label>
-                        </div>
-                        <div class="slider">
-                            <input type="range" id="osc1-freq-release" />
-                            <label>Rels</label>
+                            <input type="range" id="osc1-gain-master" min="0" max="1" step="0.1" />
+                            <label>Mstr</label>
                         </div>
                     </div>
                 </div>
                 <div class="group">
                     <label><input type="checkbox" id="osc1-gain-env" /> Gain Envelope</label>
                     <div class="row">
-                        <div class="slider">
-                            <input type="range" id="osc1-gain-master" min="0" max="1" step="0.1" />
-                            <label>Mstr</label>
-                        </div>
                         <div class="slider">
                             <input type="range" id="osc1-gain-attack" min="-10" max="10" step="1" />
                             <label>Atck</label>
@@ -100,6 +88,23 @@
                                 max="10"
                                 step="1"
                             />
+                            <label>Rels</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="group">
+                    <label><input type="checkbox" id="osc1-freq-env" /> Frequency Envelope</label>
+                    <div class="row">
+                        <div class="slider">
+                            <input type="range" id="osc1-freq-attack" />
+                            <label>Atck</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" id="osc1-freq-sustain" />
+                            <label>Sust</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" id="osc1-freq-release" />
                             <label>Rels</label>
                         </div>
                     </div>
@@ -152,29 +157,17 @@
             <h2>Oscillator 2</h2>
             <div class="row">
                 <div class="group">
-                    <label><input type="checkbox" /> Frequency Envelope</label>
+                    <label>Gain</label>
                     <div class="row">
                         <div class="slider">
-                            <input type="range" />
-                            <label>Atck</label>
-                        </div>
-                        <div class="slider">
-                            <input type="range" />
-                            <label>Sust</label>
-                        </div>
-                        <div class="slider">
-                            <input type="range" />
-                            <label>Rels</label>
+                            <input type="range" id="osc2-gain-master" min="0" max="1" step="0.1" />
+                            <label>Mstr</label>
                         </div>
                     </div>
                 </div>
                 <div class="group">
                     <label><input type="checkbox" id="osc2-gain-env" /> Gain Envelope</label>
                     <div class="row">
-                        <div class="slider">
-                            <input type="range" id="osc2-gain-master" min="0" max="1" step="0.1" />
-                            <label>Mstr</label>
-                        </div>
                         <div class="slider">
                             <input type="range" id="osc2-gain-attack" min="-10" max="10" step="1" />
                             <label>Atck</label>
@@ -197,6 +190,23 @@
                                 max="10"
                                 step="1"
                             />
+                            <label>Rels</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="group">
+                    <label><input type="checkbox" /> Frequency Envelope</label>
+                    <div class="row">
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Atck</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
+                            <label>Sust</label>
+                        </div>
+                        <div class="slider">
+                            <input type="range" />
                             <label>Rels</label>
                         </div>
                     </div>
@@ -284,6 +294,7 @@
                 <button class="key white" data-note="81"></button>
                 <button class="key black" data-note="82"></button>
                 <button class="key white" data-note="83"></button>
+                <button class="key white" data-note="84"></button>
             </div>
         </div>
     </div>
