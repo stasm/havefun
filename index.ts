@@ -31,11 +31,11 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         let R = (document.querySelector(`#osc${i + 1}-gain-release`)! as HTMLInputElement).value;
         let D = (document.querySelector(`#osc${i + 1}-freq-detune`)! as HTMLInputElement).value;
 
-        let m = gain(M);
-        let a = envelope(A);
-        let s = envelope(S);
-        let r = envelope(R);
-        let d = detune(D);
+        let m = parseFloat(M) ** Math.E;
+        let a = (parseInt(A) / 9) ** 3;
+        let s = (parseInt(S) / 9) ** 3;
+        let r = (parseInt(R) / 6) ** 3;
+        let d = parseInt(D) ** 3;
 
         wave.osc.frequency.setValueAtTime(freq, time);
         wave.osc.detune.setValueAtTime(d, time);
@@ -56,22 +56,6 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         wave.osc.start();
         wave.osc.stop(end);
     }
-}
-
-/**
- * Map the value of the envelope slider from range (-10,10) to ca. (0, 8).
- * @param value Value of the envelope slider.
- */
-function envelope(value: string) {
-    return 2 ** (parseFloat(value) / Math.E);
-}
-
-function gain(value: string) {
-    return parseFloat(value) ** Math.E;
-}
-
-function detune(value: string) {
-    return parseInt(value) ** 3;
 }
 
 function freq_from_note(note: number) {
