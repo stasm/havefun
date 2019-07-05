@@ -20,18 +20,27 @@ function play(instr: Instrument, freq: number, offset: number) {
     instr.osc1.frequency.setValueAtTime(freq, time);
     instr.gain1.gain.cancelScheduledValues(time);
 
+    let master1 = (document.querySelector("#osc1-gain-master")! as HTMLInputElement).value;
+    let m1 = parseFloat(master1);
+
     let osc1_gain_env = document.querySelector("#osc1-gain-env")! as HTMLInputElement;
     if (osc1_gain_env.checked) {
-        let a = (document.querySelector("#osc1-gain-attack")! as HTMLInputElement).value;
-        let s = (document.querySelector("#osc1-gain-sustain")! as HTMLInputElement).value;
-        let r = (document.querySelector("#osc1-gain-release")! as HTMLInputElement).value;
+        let a_val = (document.querySelector("#osc1-gain-attack")! as HTMLInputElement).value;
+        let s_val = (document.querySelector("#osc1-gain-sustain")! as HTMLInputElement).value;
+        let r_val = (document.querySelector("#osc1-gain-release")! as HTMLInputElement).value;
+
+        let a = envelope(a_val);
+        let s = envelope(s_val);
+        let r = envelope(r_val);
 
         instr.gain1.gain.linearRampToValueAtTime(0, time);
-        instr.gain1.gain.linearRampToValueAtTime(1, time + envelope(a));
-        instr.gain1.gain.setValueAtTime(1, time + envelope(s));
-        instr.gain1.gain.exponentialRampToValueAtTime(0.00001, time + envelope(s) + envelope(r));
+        instr.gain1.gain.linearRampToValueAtTime(m1, time + a);
+        instr.gain1.gain.setValueAtTime(m1, time + a + s);
+        instr.gain1.gain.exponentialRampToValueAtTime(0.00001, time + a + s + r);
+        return time + a + s + r;
     } else {
-        instr.gain1.gain.linearRampToValueAtTime(1, time);
+        instr.gain1.gain.linearRampToValueAtTime(m1, time);
+        return time + 1;
     }
 }
 
@@ -40,14 +49,15 @@ function play(instr: Instrument, freq: number, offset: number) {
  * @param value Value of the envelope slider.
  */
 function envelope(value: string) {
-    return Math.E ** (parseFloat(value) / 5);
+    return 2 ** (parseFloat(value) / Math.E);
 }
 
 function play_key(evt: Event) {
     let freq = (evt.currentTarget! as Element).getAttribute("data-freq")!;
     let instr = create_instrument();
-    play(instr, parseFloat(freq), 0);
+    let end = play(instr, parseFloat(freq), 0);
     instr.osc1.start();
+    instr.osc1.stop(end);
 }
 
 for (let key of document.querySelectorAll(".key")) {
