@@ -25,18 +25,21 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
     let time = audio.currentTime + offset;
 
     for (let [i, wave] of instr.waves.entries()) {
-        wave.osc.frequency.setValueAtTime(freq, time);
-        wave.amp.gain.cancelScheduledValues(time);
-
         let M = (document.querySelector(`#osc${i + 1}-gain-master`)! as HTMLInputElement).value;
         let A = (document.querySelector(`#osc${i + 1}-gain-attack`)! as HTMLInputElement).value;
         let S = (document.querySelector(`#osc${i + 1}-gain-sustain`)! as HTMLInputElement).value;
         let R = (document.querySelector(`#osc${i + 1}-gain-release`)! as HTMLInputElement).value;
+        let D = (document.querySelector(`#osc${i + 1}-freq-detune`)! as HTMLInputElement).value;
 
         let m = gain(M);
         let a = envelope(A);
         let s = envelope(S);
         let r = envelope(R);
+        let d = detune(D);
+
+        wave.osc.frequency.setValueAtTime(freq, time);
+        wave.osc.detune.setValueAtTime(d, time);
+        wave.amp.gain.cancelScheduledValues(time);
 
         let end;
         let gain_env = document.querySelector(`#osc${i + 1}-gain-env`)! as HTMLInputElement;
@@ -65,6 +68,10 @@ function envelope(value: string) {
 
 function gain(value: string) {
     return parseFloat(value) ** Math.E;
+}
+
+function detune(value: string) {
+    return parseInt(value) ** 3;
 }
 
 function freq_from_note(note: number) {
