@@ -74,7 +74,8 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         let $fs = document.querySelector(`#osc${i + 1}-freq-sustain`)! as HTMLInputElement;
         let $fr = document.querySelector(`#osc${i + 1}-freq-release`)! as HTMLInputElement;
 
-        let fd = parseInt($fd.value) ** 3;
+        // [-1265,1265] i.e. one octave down and one octave up.
+        let fd = 3 * (parseInt($fd.value) - 7.5) ** 3;
         let fa = (parseInt($fa.value) / 9) ** 3;
         let fs = (parseInt($fs.value) / 9) ** 3;
         let fr = (parseInt($fr.value) / 6) ** 3;
