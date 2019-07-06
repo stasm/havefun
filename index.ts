@@ -18,7 +18,9 @@ function create_instrument(): Instrument {
 
     let $filter = document.querySelector(`#master-filter-enabled`)! as HTMLInputElement;
     if ($filter.checked) {
-        let $type = document.querySelector(`#master-filter-type`)! as HTMLInputElement;
+        let $type = document.querySelector(
+            `input[name="master-filter-type"]:checked`
+        )! as HTMLInputElement;
         let $freq = document.querySelector(`#master-filter-freq`)! as HTMLInputElement;
         let $q = document.querySelector(`#master-filter-q`)! as HTMLInputElement;
 
