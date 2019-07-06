@@ -32,6 +32,10 @@
         height: 50px;
     }
 
+    label.horizontal {
+        display: block;
+    }
+
     .key.white {
         background: #fff;
         width: 30px;
@@ -296,37 +300,23 @@
                             <label>Q</label>
                         </div>
                         <div>
-                            <div>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="master-filter-type"
-                                        value="lowpass"
-                                        checked
-                                    />
-                                    Lowpass
-                                </label>
-                            </div>
-                            <div>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="master-filter-type"
-                                        value="highpass"
-                                    />
-                                    Highpass
-                                </label>
-                            </div>
-                            <div>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="master-filter-type"
-                                        value="bandpass"
-                                    />
-                                    Bandpass
-                                </label>
-                            </div>
+                            <label class="horizontal">
+                                <input
+                                    type="radio"
+                                    name="master-filter-type"
+                                    value="lowpass"
+                                    checked
+                                />
+                                Lowpass
+                            </label>
+                            <label class="horizontal">
+                                <input type="radio" name="master-filter-type" value="highpass" />
+                                Highpass
+                            </label>
+                            <label class="horizontal">
+                                <input type="radio" name="master-filter-type" value="bandpass" />
+                                Bandpass
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -342,15 +332,8 @@
                             <label>Freq</label>
                         </div>
                         <div>
-                            <div>
-                                <label><input type="checkbox" />Pitch</label>
-                            </div>
-                            <div>
-                                <label><input type="checkbox" />Gain</label>
-                            </div>
-                            <div>
-                                <label><input type="checkbox" />Filter</label>
-                            </div>
+                            <label class="horizontal"><input type="checkbox" />Gain Amnt</label>
+                            <label class="horizontal"><input type="checkbox" />Filter Freq</label>
                         </div>
                     </div>
                 </div>
