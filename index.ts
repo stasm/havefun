@@ -24,8 +24,8 @@ function create_instrument(): Instrument {
         let $freq = document.querySelector(`#master-filter-freq`)! as HTMLInputElement;
         let $q = document.querySelector(`#master-filter-q`)! as HTMLInputElement;
 
-        let freq = parseFloat($freq.value);
-        let q = parseFloat($q.value);
+        let freq = 2 ** parseInt($freq.value);
+        let q = parseFloat($q.value) ** 1.5;
 
         let flt = audio.createBiquadFilter();
         flt.type = $type.value as BiquadFilterType;
