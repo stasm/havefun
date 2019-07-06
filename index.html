@@ -20,20 +20,21 @@
         flex-flow: row wrap;
     }
 
-    .slider > * {
+    label.horizontal {
+        display: block;
+    }
+
+    label.vertical {
         display: block;
         text-align: center;
     }
 
-    .slider > input {
+    label.vertical input {
+        display: block;
         margin: 35px -25px;
         transform: rotate(-90deg);
         width: 100px;
         height: 50px;
-    }
-
-    label.horizontal {
-        display: block;
     }
 
     .key.white {
@@ -61,7 +62,7 @@
                 <div class="group">
                     <label>Gain</label>
                     <div class="row">
-                        <div class="slider">
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc1-gain-amount"
@@ -70,14 +71,14 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Amnt</label>
-                        </div>
+                            Amnt
+                        </label>
                     </div>
                 </div>
                 <div class="group">
                     <label>Gain Envelope</label>
                     <div class="row">
-                        <div class="slider">
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc1-gain-attack"
@@ -86,9 +87,9 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Atck</label>
-                        </div>
-                        <div class="slider">
+                            Atck
+                        </label>
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc1-gain-sustain"
@@ -97,9 +98,9 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Sust</label>
-                        </div>
-                        <div class="slider">
+                            Sust
+                        </label>
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc1-gain-release"
@@ -108,23 +109,23 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Rels</label>
-                        </div>
+                            Rels
+                        </label>
                     </div>
                 </div>
                 <div class="group">
                     <label>Detune</label>
                     <div class="row">
-                        <div class="slider">
+                        <label class="vertical">
                             <input type="range" id="osc1-freq-detune" min="-16" max="15" step="1" />
-                            <label>Cents<sup>3</sup></label>
-                        </div>
+                            Cents<sup>3</sup>
+                        </label>
                     </div>
                 </div>
                 <div class="group">
                     <label><input type="checkbox" id="osc1-freq-env" /> Frequency Envelope</label>
                     <div class="row">
-                        <div class="slider">
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc1-freq-attack"
@@ -133,9 +134,9 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Atck</label>
-                        </div>
-                        <div class="slider">
+                            Atck
+                        </label>
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc1-freq-sustain"
@@ -144,9 +145,9 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Sust</label>
-                        </div>
-                        <div class="slider">
+                            Sust
+                        </label>
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc1-freq-release"
@@ -155,8 +156,8 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Rels</label>
-                        </div>
+                            Rels
+                        </label>
                     </div>
                 </div>
             </div>
@@ -167,7 +168,7 @@
                 <div class="group">
                     <label>Gain</label>
                     <div class="row">
-                        <div class="slider">
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc2-gain-amount"
@@ -176,14 +177,14 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Amnt</label>
-                        </div>
+                            Amnt
+                        </label>
                     </div>
                 </div>
                 <div class="group">
                     <label>Gain Envelope</label>
                     <div class="row">
-                        <div class="slider">
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc2-gain-attack"
@@ -192,9 +193,9 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Atck</label>
-                        </div>
-                        <div class="slider">
+                            Atck
+                        </label>
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc2-gain-sustain"
@@ -203,9 +204,9 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Sust</label>
-                        </div>
-                        <div class="slider">
+                            Sust
+                        </label>
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc2-gain-release"
@@ -214,23 +215,23 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Rels</label>
-                        </div>
+                            Rels
+                        </label>
                     </div>
                 </div>
                 <div class="group">
                     <label>Detune</label>
                     <div class="row">
-                        <div class="slider">
+                        <label class="vertical">
                             <input type="range" id="osc2-freq-detune" min="-16" max="15" step="1" />
-                            <label>Cents<sup>3</sup></label>
-                        </div>
+                            Cents<sup>3</sup>
+                        </label>
                     </div>
                 </div>
                 <div class="group">
                     <label><input type="checkbox" id="osc2-freq-env" /> Frequency Envelope</label>
                     <div class="row">
-                        <div class="slider">
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc2-freq-attack"
@@ -239,9 +240,9 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Atck</label>
-                        </div>
-                        <div class="slider">
+                            Atck
+                        </label>
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc2-freq-sustain"
@@ -250,9 +251,9 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Sust</label>
-                        </div>
-                        <div class="slider">
+                            Sust
+                        </label>
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="osc2-freq-release"
@@ -261,8 +262,8 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Rels</label>
-                        </div>
+                            Rels
+                        </label>
                     </div>
                 </div>
             </div>
@@ -275,7 +276,7 @@
                 <div class="group">
                     <label>Gain</label>
                     <div class="row">
-                        <div class="slider">
+                        <label class="vertical">
                             <input
                                 type="range"
                                 id="master-gain-amount"
@@ -284,21 +285,21 @@
                                 max="15"
                                 step="1"
                             />
-                            <label>Amnt</label>
-                        </div>
+                            Amnt
+                        </label>
                     </div>
                 </div>
                 <div class="group">
                     <label><input type="checkbox" id="master-filter-enabled" /> Filter</label>
                     <div class="row">
-                        <div class="slider">
+                        <label class="vertical">
                             <input type="range" id="master-filter-freq" min="0" max="5000" />
-                            <label>Freq</label>
-                        </div>
-                        <div class="slider">
+                            Freq
+                        </label>
+                        <label class="vertical">
                             <input type="range" id="master-filter-q" min="0" max="100" />
-                            <label>Q</label>
-                        </div>
+                            Q
+                        </label>
                         <div>
                             <label class="horizontal">
                                 <input
@@ -323,14 +324,14 @@
                 <div class="group">
                     <label><input type="checkbox" /> LFO</label>
                     <div class="row">
-                        <div class="slider">
+                        <label class="vertical">
                             <input type="range" />
-                            <label>Amnt</label>
-                        </div>
-                        <div class="slider">
+                            Amnt
+                        </label>
+                        <label class="vertical">
                             <input type="range" />
-                            <label>Freq</label>
-                        </div>
+                            Freq
+                        </label>
                         <div>
                             <label class="horizontal"><input type="checkbox" />Gain Amnt</label>
                             <label class="horizontal"><input type="checkbox" />Filter Freq</label>
