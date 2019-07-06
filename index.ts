@@ -1,6 +1,7 @@
 let audio = new AudioContext();
 
 interface Instrument {
+    master: GainNode;
     waves: Array<Wave>;
 }
 
@@ -10,47 +11,52 @@ interface Wave {
 }
 
 function create_instrument(): Instrument {
+    let master = audio.createGain();
+    let $gg = document.querySelector(`#master-gain-amount`)! as HTMLInputElement;
+    let gg = (parseInt($gg.value) / 9) ** 3;
+    master.gain.value = gg;
+
+    let $filter = document.querySelector(`#master-filter-enabled`)! as HTMLInputElement;
+    if ($filter.checked) {
+        let $type = document.querySelector(`#master-filter-type`)! as HTMLInputElement;
+        let $freq = document.querySelector(`#master-filter-freq`)! as HTMLInputElement;
+        let $q = document.querySelector(`#master-filter-q`)! as HTMLInputElement;
+
+        let freq = parseFloat($freq.value);
+        let q = parseFloat($q.value);
+
+        let flt = audio.createBiquadFilter();
+        flt.type = $type.value as BiquadFilterType;
+        flt.frequency.value = freq;
+        flt.Q.value = q;
+
+        master.connect(flt);
+        flt.connect(audio.destination);
+    } else {
+        master.connect(audio.destination);
+    }
+
     let waves: Array<Wave> = [];
     for (let i = 0; i < 2; i++) {
         let osc = audio.createOscillator();
         let amp = audio.createGain();
         osc.connect(amp);
-
-        let $filter = document.querySelector(`#osc${i + 1}-filter-enabled`)! as HTMLInputElement;
-        if ($filter.checked) {
-            let $type = document.querySelector(`#osc${i + 1}-filter-type`)! as HTMLInputElement;
-            let $freq = document.querySelector(`#osc${i + 1}-filter-freq`)! as HTMLInputElement;
-            let $q = document.querySelector(`#osc${i + 1}-filter-q`)! as HTMLInputElement;
-
-            let freq = parseFloat($freq.value);
-            let q = parseFloat($q.value);
-
-            let flt = audio.createBiquadFilter();
-            flt.type = $type.value as BiquadFilterType;
-            flt.frequency.value = freq;
-            flt.Q.value = q;
-
-            amp.connect(flt);
-            flt.connect(audio.destination);
-        } else {
-            amp.connect(audio.destination);
-        }
-
+        amp.connect(master);
         waves.push({osc, amp});
     }
-    return {waves};
+    return {master, waves};
 }
 
 function play_instr(instr: Instrument, freq: number, offset: number) {
     let time = audio.currentTime + offset;
 
     for (let [i, wave] of instr.waves.entries()) {
-        let $gm = document.querySelector(`#osc${i + 1}-gain-master`)! as HTMLInputElement;
+        let $gg = document.querySelector(`#osc${i + 1}-gain-amount`)! as HTMLInputElement;
         let $ga = document.querySelector(`#osc${i + 1}-gain-attack`)! as HTMLInputElement;
         let $gs = document.querySelector(`#osc${i + 1}-gain-sustain`)! as HTMLInputElement;
         let $gr = document.querySelector(`#osc${i + 1}-gain-release`)! as HTMLInputElement;
 
-        let gm = (parseInt($gm.value) / 9) ** 3;
+        let gm = (parseInt($gg.value) / 9) ** 3;
         let ga = (parseInt($ga.value) / 9) ** 3;
         let gs = (parseInt($gs.value) / 9) ** 3;
         let gr = (parseInt($gr.value) / 6) ** 3;
