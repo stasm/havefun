@@ -35,20 +35,11 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         let gs = (parseInt(GS) / 9) ** 3;
         let gr = (parseInt(GR) / 6) ** 3;
 
-        wave.amp.gain.cancelScheduledValues(time);
-
-        let end;
-        let gain_env = document.querySelector(`#osc${i + 1}-gain-env`)! as HTMLInputElement;
-        if (gain_env.checked) {
-            wave.amp.gain.linearRampToValueAtTime(0, time);
-            wave.amp.gain.linearRampToValueAtTime(gm, time + ga);
-            wave.amp.gain.setValueAtTime(gm, time + ga + gs);
-            wave.amp.gain.exponentialRampToValueAtTime(0.00001, time + ga + gs + gr);
-            end = time + ga + gs + gr;
-        } else {
-            wave.amp.gain.linearRampToValueAtTime(gm, time);
-            end = time + 1;
-        }
+        // wave.amp.gain.cancelScheduledValues(time);
+        wave.amp.gain.setValueAtTime(0, time);
+        wave.amp.gain.linearRampToValueAtTime(gm, time + ga);
+        wave.amp.gain.setValueAtTime(gm, time + ga + gs);
+        wave.amp.gain.exponentialRampToValueAtTime(0.00001, time + ga + gs + gr);
 
         let FD = (document.querySelector(`#osc${i + 1}-freq-detune`)! as HTMLInputElement).value;
         let FA = (document.querySelector(`#osc${i + 1}-freq-attack`)! as HTMLInputElement).value;
@@ -60,7 +51,7 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         let fs = (parseInt(FS) / 9) ** 3;
         let fr = (parseInt(FR) / 6) ** 3;
 
-        wave.osc.frequency.cancelScheduledValues(time);
+        // wave.osc.frequency.cancelScheduledValues(time);
         wave.osc.detune.setValueAtTime(fd, time);
 
         let freq_env = document.querySelector(`#osc${i + 1}-freq-env`)! as HTMLInputElement;
@@ -74,7 +65,7 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         }
 
         wave.osc.start();
-        wave.osc.stop(end);
+        wave.osc.stop(time + ga + gs + gr);
     }
 }
 
