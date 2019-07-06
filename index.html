@@ -156,19 +156,19 @@
                     </div>
                 </div>
                 <div class="group">
-                    <label><input type="checkbox" /> Filter</label>
-                    <select>
-                        <option>Lowpass</option>
-                        <option>Highpass</option>
-                        <option>Bandpass</option>
+                    <label><input type="checkbox" id="osc1-filter-enabled" /> Filter</label>
+                    <select id="osc1-filter-type">
+                        <option value="lowpass">Lowpass</option>
+                        <option value="highpass">Highpass</option>
+                        <option value="bandpass">Bandpass</option>
                     </select>
                     <div class="row">
                         <div class="slider">
-                            <input type="range" />
+                            <input type="range" id="osc1-filter-freq" min="0" max="5000" />
                             <label>Freq.</label>
                         </div>
                         <div class="slider">
-                            <input type="range" />
+                            <input type="range" id="osc1-filter-q" min="0" max="100" />
                             <label>Q</label>
                         </div>
                     </div>
@@ -304,7 +304,7 @@
                     </div>
                 </div>
                 <div class="group">
-                    <label><input type="checkbox" /> Filter</label>
+                    <label><input type="checkbox" id="osc2-filter-enabled" /> Filter</label>
                     <select>
                         <option>Lowpass</option>
                         <option>Highpass</option>
