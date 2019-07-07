@@ -9,7 +9,7 @@ interface Instrument {
     [InstrumentParam.LFOEnabled]: boolean;
     [InstrumentParam.LFOAmount]: number;
     [InstrumentParam.LFOFreq]: number;
-    [InstrumentParam.LFOFilterDetune]: boolean;
+    [InstrumentParam.FilterDetuneLFO]: boolean;
     [InstrumentParam.NoiseGainAmount]: number;
     [InstrumentParam.NoiseGainAttack]: number;
     [InstrumentParam.NoiseGainSustain]: number;
@@ -36,10 +36,10 @@ const enum InstrumentParam {
     FilterType,
     FilterFreq,
     FilterQ,
+    FilterDetuneLFO,
     LFOEnabled,
     LFOAmount,
     LFOFreq,
-    LFOFilterDetune,
     NoiseGainAmount,
     NoiseGainAttack,
     NoiseGainSustain,
@@ -85,11 +85,11 @@ function create_instrument(): Instrument {
     instrument[InstrumentParam.FilterType] = $type.value as BiquadFilterType;
     instrument[InstrumentParam.FilterFreq] = parseInt($freq.value);
     instrument[InstrumentParam.FilterQ] = parseInt($q.value);
+    instrument[InstrumentParam.FilterDetuneLFO] = $detune.checked;
 
     instrument[InstrumentParam.LFOEnabled] = $lfo.checked;
     instrument[InstrumentParam.LFOAmount] = parseInt($lg.value);
     instrument[InstrumentParam.LFOFreq] = parseInt($lf.value);
-    instrument[InstrumentParam.LFOFilterDetune] = $detune.checked;
 
     instrument[InstrumentParam.NoiseGainAmount] = parseInt($ng.value);
     instrument[InstrumentParam.NoiseGainAttack] = parseInt($na.value);
@@ -136,7 +136,6 @@ function create_instrument(): Instrument {
 }
 
 function play_instr(instr: Instrument, freq: number, offset: number) {
-    console.log(JSON.stringify(instr, null, 4));
     let time = audio.currentTime + offset;
     let duration = 0;
 
@@ -168,7 +167,7 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         flt.type = instr[InstrumentParam.FilterType];
         flt.frequency.value = freq;
         flt.Q.value = q;
-        if (lfa && instr[InstrumentParam.LFOFilterDetune]) {
+        if (lfa && instr[InstrumentParam.FilterDetuneLFO]) {
             lfa.connect(flt.detune);
         }
 
