@@ -4,6 +4,7 @@ interface Instrument {
     master: GainNode;
     waves: Array<Wave>;
     lfo?: OscillatorNode;
+    lfa?: GainNode;
 }
 
 interface Wave {
@@ -25,8 +26,9 @@ function create_instrument(): Instrument {
 
         // [27, 5832];
         let lg = (parseFloat($lg.value) + 3) ** 3;
-        // [0, 225]
-        let lf = parseFloat($lf.value) ** 2;
+        // [0, 125]
+        let lf = (parseFloat($lf.value) / 3) ** 3;
+        console.log({lg, lf});
 
         lfo = audio.createOscillator();
         lfo.frequency.value = lf;
@@ -69,7 +71,7 @@ function create_instrument(): Instrument {
         amp.connect(master);
         waves.push({osc, amp});
     }
-    return {master, waves, lfo};
+    return {master, waves, lfo, lfa};
 }
 
 function play_instr(instr: Instrument, freq: number, offset: number) {
@@ -89,7 +91,6 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
 
         duration = Math.max(duration, ga + gs + gr);
 
-        // wave.amp.gain.cancelScheduledValues(time);
         wave.amp.gain.setValueAtTime(0, time);
         wave.amp.gain.linearRampToValueAtTime(gm, time + ga);
         wave.amp.gain.setValueAtTime(gm, time + ga + gs);
@@ -106,8 +107,13 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         let fs = (parseInt($fs.value) / 9) ** 3;
         let fr = (parseInt($fr.value) / 6) ** 3;
 
-        // wave.osc.frequency.cancelScheduledValues(time);
-        wave.osc.detune.setValueAtTime(fd, time);
+        // The intrinsic value of detune…
+        wave.osc.detune.value = fd;
+        // …can be modulated by the LFO.
+        let $ld = $(`input[name="master-lfo-osc${i + 1}-detune`)! as HTMLInputElement;
+        if (instr.lfa && $ld.checked) {
+            instr.lfa.connect(wave.osc.detune);
+        }
 
         let $freq_env = document.querySelector(`#osc${i + 1}-freq-env`)! as HTMLInputElement;
         if ($freq_env.checked) {
