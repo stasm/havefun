@@ -3,6 +3,8 @@ let audio = new AudioContext();
 interface Instrument {
     master: GainNode;
     waves: Array<Wave>;
+    noise?: AudioBufferSourceNode;
+    noise_gain?: GainNode;
     lfo?: OscillatorNode;
     lfa?: GainNode;
 }
@@ -28,7 +30,6 @@ function create_instrument(): Instrument {
         let lg = (parseFloat($lg.value) + 3) ** 3;
         // [0, 125]
         let lf = (parseFloat($lf.value) / 3) ** 3;
-        console.log({lg, lf});
 
         lfo = audio.createOscillator();
         lfo.frequency.value = lf;
@@ -71,7 +72,21 @@ function create_instrument(): Instrument {
         amp.connect(master);
         waves.push({osc, amp});
     }
-    return {master, waves, lfo, lfa};
+
+    let noise, noise_gain;
+    let $ng = $('input[name="noise-gain-amount"]')! as HTMLInputElement;
+    let ng = (parseInt($ng.value) / 9) ** 3;
+    if (ng > 0) {
+        noise = audio.createBufferSource();
+        noise.buffer = noise_buffer;
+        noise.loop = true;
+
+        noise_gain = audio.createGain();
+
+        noise.connect(noise_gain);
+        noise_gain.connect(master);
+    }
+    return {master, waves, lfo, lfa, noise, noise_gain};
 }
 
 function play_instr(instr: Instrument, freq: number, offset: number) {
@@ -84,7 +99,7 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         let $gs = $(`#osc${i + 1}-gain-sustain`)! as HTMLInputElement;
         let $gr = $(`#osc${i + 1}-gain-release`)! as HTMLInputElement;
 
-        let gm = (parseInt($gg.value) / 9) ** 3;
+        let gg = (parseInt($gg.value) / 9) ** 3;
         let ga = (parseInt($ga.value) / 9) ** 3;
         let gs = (parseInt($gs.value) / 9) ** 3;
         let gr = (parseInt($gr.value) / 6) ** 3;
@@ -92,8 +107,8 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         duration = Math.max(duration, ga + gs + gr);
 
         wave.amp.gain.setValueAtTime(0, time);
-        wave.amp.gain.linearRampToValueAtTime(gm, time + ga);
-        wave.amp.gain.setValueAtTime(gm, time + ga + gs);
+        wave.amp.gain.linearRampToValueAtTime(gg, time + ga);
+        wave.amp.gain.setValueAtTime(gg, time + ga + gs);
         wave.amp.gain.exponentialRampToValueAtTime(0.00001, time + ga + gs + gr);
 
         let $fd = $(`#osc${i + 1}-freq-detune`)! as HTMLInputElement;
@@ -127,6 +142,29 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
 
         wave.osc.start();
         wave.osc.stop(time + ga + gs + gr);
+    }
+
+    if (instr.noise && instr.noise_gain) {
+        let $ng = $('input[name="noise-gain-amount"]')! as HTMLInputElement;
+
+        let $na = $('input[name="noise-gain-attack"]')! as HTMLInputElement;
+        let $ns = $('input[name="noise-gain-sustain"]')! as HTMLInputElement;
+        let $nr = $('input[name="noise-gain-release"]')! as HTMLInputElement;
+
+        let ng = (parseInt($ng.value) / 9) ** 3;
+        let na = (parseInt($na.value) / 9) ** 3;
+        let ns = (parseInt($ns.value) / 9) ** 3;
+        let nr = (parseInt($nr.value) / 6) ** 3;
+
+        duration = Math.max(duration, na + ns + nr);
+
+        instr.noise_gain.gain.setValueAtTime(0, time);
+        instr.noise_gain.gain.linearRampToValueAtTime(ng, time + na);
+        instr.noise_gain.gain.setValueAtTime(ng, time + na + ns);
+        instr.noise_gain.gain.exponentialRampToValueAtTime(0.00001, time + na + ns + nr);
+
+        instr.noise.start();
+        instr.noise.stop(time + na + ns + nr);
     }
 
     if (instr.lfo) {
@@ -190,4 +228,12 @@ function on_midi_message(message: WebMidi.MIDIMessageEvent) {
 
 function $(selector: string) {
     return document.querySelector(selector);
+}
+
+let buffer_size = 2 * audio.sampleRate;
+let noise_buffer = audio.createBuffer(1, buffer_size, audio.sampleRate);
+let output = noise_buffer.getChannelData(0);
+
+for (var i = 0; i < buffer_size; i++) {
+    output[i] = Math.random() * 2 - 1;
 }
