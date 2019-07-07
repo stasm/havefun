@@ -13,7 +13,7 @@ interface Wave {
 
 function create_instrument(): Instrument {
     let master = audio.createGain();
-    let $gg = document.querySelector(`#master-gain-amount`)! as HTMLInputElement;
+    let $gg = $(`#master-gain-amount`)! as HTMLInputElement;
     let gg = (parseInt($gg.value) / 9) ** 3;
     master.gain.value = gg;
 
@@ -77,10 +77,10 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
     let duration = 0;
 
     for (let [i, wave] of instr.waves.entries()) {
-        let $gg = document.querySelector(`#osc${i + 1}-gain-amount`)! as HTMLInputElement;
-        let $ga = document.querySelector(`#osc${i + 1}-gain-attack`)! as HTMLInputElement;
-        let $gs = document.querySelector(`#osc${i + 1}-gain-sustain`)! as HTMLInputElement;
-        let $gr = document.querySelector(`#osc${i + 1}-gain-release`)! as HTMLInputElement;
+        let $gg = $(`#osc${i + 1}-gain-amount`)! as HTMLInputElement;
+        let $ga = $(`#osc${i + 1}-gain-attack`)! as HTMLInputElement;
+        let $gs = $(`#osc${i + 1}-gain-sustain`)! as HTMLInputElement;
+        let $gr = $(`#osc${i + 1}-gain-release`)! as HTMLInputElement;
 
         let gm = (parseInt($gg.value) / 9) ** 3;
         let ga = (parseInt($ga.value) / 9) ** 3;
@@ -95,10 +95,10 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         wave.amp.gain.setValueAtTime(gm, time + ga + gs);
         wave.amp.gain.exponentialRampToValueAtTime(0.00001, time + ga + gs + gr);
 
-        let $fd = document.querySelector(`#osc${i + 1}-freq-detune`)! as HTMLInputElement;
-        let $fa = document.querySelector(`#osc${i + 1}-freq-attack`)! as HTMLInputElement;
-        let $fs = document.querySelector(`#osc${i + 1}-freq-sustain`)! as HTMLInputElement;
-        let $fr = document.querySelector(`#osc${i + 1}-freq-release`)! as HTMLInputElement;
+        let $fd = $(`#osc${i + 1}-freq-detune`)! as HTMLInputElement;
+        let $fa = $(`#osc${i + 1}-freq-attack`)! as HTMLInputElement;
+        let $fs = $(`#osc${i + 1}-freq-sustain`)! as HTMLInputElement;
+        let $fr = $(`#osc${i + 1}-freq-release`)! as HTMLInputElement;
 
         // [-1265,1265] i.e. one octave down and one octave up.
         let fd = 3 * (parseInt($fd.value) - 7.5) ** 3;
@@ -169,7 +169,7 @@ function on_midi_message(message: WebMidi.MIDIMessageEvent) {
         case 240:
             break;
         case 144: {
-            let button = document.querySelector(`button.key[data-note="${note}"]`);
+            let button = $(`button.key[data-note="${note}"]`);
             if (velocity > 0) {
                 play_note(note);
                 button && button.classList.add("pressed");
