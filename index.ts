@@ -282,6 +282,11 @@ for (let key of document.querySelectorAll(".key")) {
     key.addEventListener("click", play_key);
 }
 
+function export_instr() {
+    let instr = create_instrument();
+    console.log(JSON.stringify(instr));
+}
+
 async function request_midi() {
     try {
         let midi = await navigator.requestMIDIAccess();
