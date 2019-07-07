@@ -320,19 +320,21 @@
                     </div>
                 </div>
                 <div class="group">
-                    <label><input type="checkbox" /> LFO</label>
+                    <label><input type="checkbox" name="master-lfo-enabled" /> LFO</label>
                     <div class="row">
                         <label class="vertical">
-                            <input type="range" />
+                            <input type="range" name="master-lfo-amount" min="0" max="15" />
                             Amnt
                         </label>
                         <label class="vertical">
-                            <input type="range" />
+                            <input type="range" name="master-lfo-freq" min="0" max="15" />
                             Freq
                         </label>
                         <div>
-                            <label class="horizontal"><input type="checkbox" />Gain Amnt</label>
-                            <label class="horizontal"><input type="checkbox" />Filter Freq</label>
+                            <label class="horizontal">
+                                <input type="checkbox" name="master-lfo-filter-detune" />
+                                Filter Detune
+                            </label>
                         </div>
                     </div>
                 </div>

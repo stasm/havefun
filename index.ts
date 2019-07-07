@@ -3,6 +3,7 @@ let audio = new AudioContext();
 interface Instrument {
     master: GainNode;
     waves: Array<Wave>;
+    lfo?: OscillatorNode;
 }
 
 interface Wave {
@@ -16,13 +17,32 @@ function create_instrument(): Instrument {
     let gg = (parseInt($gg.value) / 9) ** 3;
     master.gain.value = gg;
 
-    let $filter = document.querySelector(`#master-filter-enabled`)! as HTMLInputElement;
+    let lfa, lfo;
+    let $lfo = $('input[name="master-lfo-enabled"]')! as HTMLInputElement;
+    if ($lfo.checked) {
+        let $lg = $('input[name="master-lfo-amount"]')! as HTMLInputElement;
+        let $lf = $('input[name="master-lfo-freq"]')! as HTMLInputElement;
+
+        // [27, 5832];
+        let lg = (parseFloat($lg.value) + 3) ** 3;
+        // [0, 225]
+        let lf = parseFloat($lf.value) ** 2;
+
+        lfo = audio.createOscillator();
+        lfo.frequency.value = lf;
+
+        lfa = audio.createGain();
+        lfa.gain.value = lg;
+
+        lfo.connect(lfa);
+    }
+
+    let $filter = $(`#master-filter-enabled`)! as HTMLInputElement;
     if ($filter.checked) {
-        let $type = document.querySelector(
-            `input[name="master-filter-type"]:checked`
-        )! as HTMLInputElement;
-        let $freq = document.querySelector(`#master-filter-freq`)! as HTMLInputElement;
-        let $q = document.querySelector(`#master-filter-q`)! as HTMLInputElement;
+        let $type = $(`input[name="master-filter-type"]:checked`)! as HTMLInputElement;
+        let $freq = $(`#master-filter-freq`)! as HTMLInputElement;
+        let $q = $(`#master-filter-q`)! as HTMLInputElement;
+        let $detune = $(`input[name="master-lfo-filter-detune"]`)! as HTMLInputElement;
 
         let freq = 2 ** parseInt($freq.value);
         let q = parseFloat($q.value) ** 1.5;
@@ -31,6 +51,9 @@ function create_instrument(): Instrument {
         flt.type = $type.value as BiquadFilterType;
         flt.frequency.value = freq;
         flt.Q.value = q;
+        if (lfa && $detune.checked) {
+            lfa.connect(flt.detune);
+        }
 
         master.connect(flt);
         flt.connect(audio.destination);
@@ -46,11 +69,12 @@ function create_instrument(): Instrument {
         amp.connect(master);
         waves.push({osc, amp});
     }
-    return {master, waves};
+    return {master, waves, lfo};
 }
 
 function play_instr(instr: Instrument, freq: number, offset: number) {
     let time = audio.currentTime + offset;
+    let duration = 0;
 
     for (let [i, wave] of instr.waves.entries()) {
         let $gg = document.querySelector(`#osc${i + 1}-gain-amount`)! as HTMLInputElement;
@@ -62,6 +86,8 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         let ga = (parseInt($ga.value) / 9) ** 3;
         let gs = (parseInt($gs.value) / 9) ** 3;
         let gr = (parseInt($gr.value) / 6) ** 3;
+
+        duration = Math.max(duration, ga + gs + gr);
 
         // wave.amp.gain.cancelScheduledValues(time);
         wave.amp.gain.setValueAtTime(0, time);
@@ -95,6 +121,11 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
 
         wave.osc.start();
         wave.osc.stop(time + ga + gs + gr);
+    }
+
+    if (instr.lfo) {
+        instr.lfo.start();
+        instr.lfo.stop(time + duration);
     }
 }
 
@@ -149,4 +180,8 @@ function on_midi_message(message: WebMidi.MIDIMessageEvent) {
         default:
             console.log(command, note, velocity);
     }
+}
+
+function $(selector: string) {
+    return document.querySelector(selector);
 }
