@@ -7,6 +7,7 @@ interface Instrument {
     [InstrumentParam.FilterFreq]: number;
     [InstrumentParam.FilterQ]: number;
     [InstrumentParam.LFOEnabled]: boolean;
+    [InstrumentParam.LFOType]: OscillatorType;
     [InstrumentParam.LFOAmount]: number;
     [InstrumentParam.LFOFreq]: number;
     [InstrumentParam.FilterDetuneLFO]: boolean;
@@ -18,6 +19,7 @@ interface Instrument {
 }
 
 interface Oscillator {
+    [OscillatorParam.Type]: OscillatorType;
     [OscillatorParam.GainAmount]: number;
     [OscillatorParam.GainAttack]: number;
     [OscillatorParam.GainSustain]: number;
@@ -38,6 +40,7 @@ const enum InstrumentParam {
     FilterQ,
     FilterDetuneLFO,
     LFOEnabled,
+    LFOType,
     LFOAmount,
     LFOFreq,
     NoiseGainAmount,
@@ -48,6 +51,7 @@ const enum InstrumentParam {
 }
 
 const enum OscillatorParam {
+    Type,
     GainAmount,
     GainAttack,
     GainSustain,
@@ -70,6 +74,7 @@ function create_instrument(): Instrument {
     let $detune = $(`input[name="master-filter-detune-lfo"]`)! as HTMLInputElement;
 
     let $lfo = $('input[name="master-lfo-enabled"]')! as HTMLInputElement;
+    let $lt = $('input[name="master-lfo-type"]:checked')! as HTMLInputElement;
     let $lg = $('input[name="master-lfo-amount"]')! as HTMLInputElement;
     let $lf = $('input[name="master-lfo-freq"]')! as HTMLInputElement;
 
@@ -88,6 +93,7 @@ function create_instrument(): Instrument {
     instrument[InstrumentParam.FilterDetuneLFO] = $detune.checked;
 
     instrument[InstrumentParam.LFOEnabled] = $lfo.checked;
+    instrument[InstrumentParam.LFOType] = $lt.value as OscillatorType;
     instrument[InstrumentParam.LFOAmount] = parseInt($lg.value);
     instrument[InstrumentParam.LFOFreq] = parseInt($lf.value);
 
@@ -99,6 +105,8 @@ function create_instrument(): Instrument {
     instrument[InstrumentParam.Oscillators] = [];
 
     for (let i = 1; i < 3; i++) {
+        let $t = $(`input[name="osc1-type"]:checked`)! as HTMLInputElement;
+
         let $gg = $(`#osc${i}-gain-amount`)! as HTMLInputElement;
         let $ga = $(`#osc${i}-gain-attack`)! as HTMLInputElement;
         let $gs = $(`#osc${i}-gain-sustain`)! as HTMLInputElement;
@@ -113,6 +121,8 @@ function create_instrument(): Instrument {
         let $fr = $(`#osc${i}-freq-release`)! as HTMLInputElement;
 
         let oscillator = [];
+        oscillator[OscillatorParam.Type] = $t.value as OscillatorType;
+
         oscillator[OscillatorParam.GainAmount] = parseInt($gg.value);
         oscillator[OscillatorParam.GainAttack] = parseInt($ga.value);
         oscillator[OscillatorParam.GainSustain] = parseInt($gs.value);
@@ -151,6 +161,7 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         let lf = (instr[InstrumentParam.LFOFreq] / 3) ** 3;
 
         lfo = audio.createOscillator();
+        lfo.type = instr[InstrumentParam.LFOType];
         lfo.frequency.value = lf;
 
         lfa = audio.createGain();
@@ -204,6 +215,7 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
     for (let osc of instr[InstrumentParam.Oscillators]) {
         let hfo = audio.createOscillator();
         let amp = audio.createGain();
+        hfo.type = osc[OscillatorParam.Type];
         hfo.connect(amp);
         amp.connect(master);
 
