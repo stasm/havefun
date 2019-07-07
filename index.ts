@@ -11,25 +11,37 @@ interface Instrument {
     [InstrumentParam.LFOAmount]: number;
     [InstrumentParam.LFOFreq]: number;
     [InstrumentParam.FilterDetuneLFO]: boolean;
-    [InstrumentParam.NoiseGainAmount]: number;
-    [InstrumentParam.NoiseGainAttack]: number;
-    [InstrumentParam.NoiseGainSustain]: number;
-    [InstrumentParam.NoiseGainRelease]: number;
-    [InstrumentParam.Oscillators]: Array<Oscillator>;
+    [InstrumentParam.Sources]: Array<Source>;
+}
+
+type Source = Oscillator | Buffer;
+
+const enum SourceKind {
+    Oscillator,
+    Buffer,
 }
 
 interface Oscillator {
-    [OscillatorParam.Type]: OscillatorType;
-    [OscillatorParam.GainAmount]: number;
-    [OscillatorParam.GainAttack]: number;
-    [OscillatorParam.GainSustain]: number;
-    [OscillatorParam.GainRelease]: number;
-    [OscillatorParam.DetuneAmount]: number;
-    [OscillatorParam.DetuneLFO]: boolean;
-    [OscillatorParam.FreqEnabled]: boolean;
-    [OscillatorParam.FreqAttack]: number;
-    [OscillatorParam.FreqSustain]: number;
-    [OscillatorParam.FreqRelease]: number;
+    [SourceParam.Kind]: SourceKind.Oscillator;
+    [SourceParam.GainAmount]: number;
+    [SourceParam.GainAttack]: number;
+    [SourceParam.GainSustain]: number;
+    [SourceParam.GainRelease]: number;
+    [SourceParam.OscillatorType]: OscillatorType;
+    [SourceParam.DetuneAmount]: number;
+    [SourceParam.DetuneLFO]: boolean;
+    [SourceParam.FreqEnabled]: boolean;
+    [SourceParam.FreqAttack]: number;
+    [SourceParam.FreqSustain]: number;
+    [SourceParam.FreqRelease]: number;
+}
+
+interface Buffer {
+    [SourceParam.Kind]: SourceKind.Buffer;
+    [SourceParam.GainAmount]: number;
+    [SourceParam.GainAttack]: number;
+    [SourceParam.GainSustain]: number;
+    [SourceParam.GainRelease]: number;
 }
 
 const enum InstrumentParam {
@@ -43,19 +55,16 @@ const enum InstrumentParam {
     LFOType,
     LFOAmount,
     LFOFreq,
-    NoiseGainAmount,
-    NoiseGainAttack,
-    NoiseGainSustain,
-    NoiseGainRelease,
-    Oscillators,
+    Sources,
 }
 
-const enum OscillatorParam {
-    Type,
+const enum SourceParam {
+    Kind,
     GainAmount,
     GainAttack,
     GainSustain,
     GainRelease,
+    OscillatorType,
     DetuneAmount,
     DetuneLFO,
     FreqEnabled,
@@ -97,12 +106,17 @@ function create_instrument(): Instrument {
     instrument[InstrumentParam.LFOAmount] = parseInt($lg.value);
     instrument[InstrumentParam.LFOFreq] = parseInt($lf.value);
 
-    instrument[InstrumentParam.NoiseGainAmount] = parseInt($ng.value);
-    instrument[InstrumentParam.NoiseGainAttack] = parseInt($na.value);
-    instrument[InstrumentParam.NoiseGainSustain] = parseInt($ns.value);
-    instrument[InstrumentParam.NoiseGainRelease] = parseInt($nr.value);
+    instrument[InstrumentParam.Sources] = [];
 
-    instrument[InstrumentParam.Oscillators] = [];
+    if (parseInt($ng.value) > 0) {
+        let source = [];
+        source[SourceParam.Kind] = SourceKind.Buffer;
+        source[SourceParam.GainAmount] = parseInt($ng.value);
+        source[SourceParam.GainAttack] = parseInt($na.value);
+        source[SourceParam.GainSustain] = parseInt($ns.value);
+        source[SourceParam.GainRelease] = parseInt($nr.value);
+        (instrument[InstrumentParam.Sources] as Array<Source>).push((source as unknown) as Buffer);
+    }
 
     for (let i = 1; i < 3; i++) {
         let $t = $(`input[name="osc1-type"]:checked`)! as HTMLInputElement;
@@ -120,25 +134,29 @@ function create_instrument(): Instrument {
         let $fs = $(`#osc${i}-freq-sustain`)! as HTMLInputElement;
         let $fr = $(`#osc${i}-freq-release`)! as HTMLInputElement;
 
-        let oscillator = [];
-        oscillator[OscillatorParam.Type] = $t.value as OscillatorType;
+        if (parseInt($gg.value) > 0) {
+            let source = [];
+            source[SourceParam.Kind] = SourceKind.Oscillator;
 
-        oscillator[OscillatorParam.GainAmount] = parseInt($gg.value);
-        oscillator[OscillatorParam.GainAttack] = parseInt($ga.value);
-        oscillator[OscillatorParam.GainSustain] = parseInt($gs.value);
-        oscillator[OscillatorParam.GainRelease] = parseInt($gr.value);
+            source[SourceParam.GainAmount] = parseInt($gg.value);
+            source[SourceParam.GainAttack] = parseInt($ga.value);
+            source[SourceParam.GainSustain] = parseInt($gs.value);
+            source[SourceParam.GainRelease] = parseInt($gr.value);
 
-        oscillator[OscillatorParam.DetuneAmount] = parseInt($da.value);
-        oscillator[OscillatorParam.DetuneLFO] = $dl.checked;
+            source[SourceParam.OscillatorType] = $t.value as OscillatorType;
 
-        oscillator[OscillatorParam.FreqEnabled] = $fe.checked;
-        oscillator[OscillatorParam.FreqAttack] = parseInt($fa.value);
-        oscillator[OscillatorParam.FreqSustain] = parseInt($fs.value);
-        oscillator[OscillatorParam.FreqRelease] = parseInt($fr.value);
+            source[SourceParam.DetuneAmount] = parseInt($da.value);
+            source[SourceParam.DetuneLFO] = $dl.checked;
 
-        (instrument[InstrumentParam.Oscillators] as Array<Oscillator>).push(
-            (oscillator as unknown) as Oscillator
-        );
+            source[SourceParam.FreqEnabled] = $fe.checked;
+            source[SourceParam.FreqAttack] = parseInt($fa.value);
+            source[SourceParam.FreqSustain] = parseInt($fs.value);
+            source[SourceParam.FreqRelease] = parseInt($fr.value);
+
+            (instrument[InstrumentParam.Sources] as Array<Source>).push(
+                (source as unknown) as Oscillator
+            );
+        }
     }
 
     // Meh, not ideal.
@@ -188,73 +206,63 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         master.connect(audio.destination);
     }
 
-    let ng = (instr[InstrumentParam.NoiseGainAmount] / 9) ** 3;
-    if (ng > 0) {
-        let noise_source = audio.createBufferSource();
-        let noise_gain = audio.createGain();
-        noise_source.buffer = noise_buffer;
-        noise_source.loop = true;
-        noise_source.connect(noise_gain);
-        noise_gain.connect(master);
-
-        let na = (instr[InstrumentParam.NoiseGainAttack] / 9) ** 3;
-        let ns = (instr[InstrumentParam.NoiseGainSustain] / 9) ** 3;
-        let nr = (instr[InstrumentParam.NoiseGainRelease] / 6) ** 3;
-
-        duration = Math.max(duration, na + ns + nr);
-
-        noise_gain.gain.setValueAtTime(0, time);
-        noise_gain.gain.linearRampToValueAtTime(ng, time + na);
-        noise_gain.gain.setValueAtTime(ng, time + na + ns);
-        noise_gain.gain.exponentialRampToValueAtTime(0.00001, time + na + ns + nr);
-
-        noise_source.start();
-        noise_source.stop(time + na + ns + nr);
-    }
-
-    for (let osc of instr[InstrumentParam.Oscillators]) {
-        let hfo = audio.createOscillator();
+    for (let source of instr[InstrumentParam.Sources]) {
         let amp = audio.createGain();
-        hfo.type = osc[OscillatorParam.Type];
-        hfo.connect(amp);
         amp.connect(master);
 
-        let gg = (osc[OscillatorParam.GainAmount] / 9) ** 3;
-        let ga = (osc[OscillatorParam.GainAttack] / 9) ** 3;
-        let gs = (osc[OscillatorParam.GainSustain] / 9) ** 3;
-        let gr = (osc[OscillatorParam.GainRelease] / 6) ** 3;
+        let gain_amount = (source[SourceParam.GainAmount] / 9) ** 3;
+        let gain_attack = (source[SourceParam.GainAttack] / 9) ** 3;
+        let gain_sustain = (source[SourceParam.GainSustain] / 9) ** 3;
+        let gain_release = (source[SourceParam.GainRelease] / 6) ** 3;
 
-        duration = Math.max(duration, ga + gs + gr);
+        duration = Math.max(duration, gain_attack + gain_sustain + gain_release);
 
         amp.gain.setValueAtTime(0, time);
-        amp.gain.linearRampToValueAtTime(gg, time + ga);
-        amp.gain.setValueAtTime(gg, time + ga + gs);
-        amp.gain.exponentialRampToValueAtTime(0.00001, time + ga + gs + gr);
+        amp.gain.linearRampToValueAtTime(gain_amount, time + gain_attack);
+        amp.gain.setValueAtTime(gain_amount, time + gain_attack + gain_sustain);
+        amp.gain.exponentialRampToValueAtTime(
+            0.00001,
+            time + gain_attack + gain_sustain + gain_release
+        );
 
-        // [-1265,1265] i.e. one octave down and one octave up.
-        let dc = 3 * (osc[OscillatorParam.DetuneAmount] - 7.5) ** 3;
-        let fa = (osc[OscillatorParam.FreqAttack] / 9) ** 3;
-        let fs = (osc[OscillatorParam.FreqSustain] / 9) ** 3;
-        let fr = (osc[OscillatorParam.FreqRelease] / 6) ** 3;
+        // XXX TypeScript doesn't recognize source[SourceParam.Kind] as the discriminant.
+        if (source[0] === SourceKind.Oscillator) {
+            let hfo = audio.createOscillator();
+            hfo.type = source[SourceParam.OscillatorType];
+            hfo.connect(amp);
 
-        // The intrinsic value of detune…
-        hfo.detune.value = dc;
-        // …can be modulated by the LFO.
-        if (lfa && osc[OscillatorParam.DetuneLFO]) {
-            lfa.connect(hfo.detune);
-        }
+            // [-1265,1265] i.e. one octave down and one octave up.
+            let dc = 3 * (source[SourceParam.DetuneAmount] - 7.5) ** 3;
+            let fa = (source[SourceParam.FreqAttack] / 9) ** 3;
+            let fs = (source[SourceParam.FreqSustain] / 9) ** 3;
+            let fr = (source[SourceParam.FreqRelease] / 6) ** 3;
+            // The intrinsic value of detune…
+            hfo.detune.value = dc;
+            // …can be modulated by the LFO.
+            if (lfa && source[SourceParam.DetuneLFO]) {
+                lfa.connect(hfo.detune);
+            }
 
-        if (osc[OscillatorParam.FreqEnabled]) {
-            hfo.frequency.linearRampToValueAtTime(0, time);
-            hfo.frequency.linearRampToValueAtTime(freq, time + fa);
-            hfo.frequency.setValueAtTime(freq, time + fa + fs);
-            hfo.frequency.exponentialRampToValueAtTime(0.00001, time + fa + fs + fr);
+            if (source[SourceParam.FreqEnabled]) {
+                hfo.frequency.linearRampToValueAtTime(0, time);
+                hfo.frequency.linearRampToValueAtTime(freq, time + fa);
+                hfo.frequency.setValueAtTime(freq, time + fa + fs);
+                hfo.frequency.exponentialRampToValueAtTime(0.00001, time + fa + fs + fr);
+            } else {
+                hfo.frequency.setValueAtTime(freq, time);
+            }
+
+            hfo.start();
+            hfo.stop(time + gain_attack + gain_sustain + gain_release);
         } else {
-            hfo.frequency.setValueAtTime(freq, time);
-        }
+            let noise = audio.createBufferSource();
+            noise.buffer = noise_buffer;
+            noise.loop = true;
+            noise.connect(amp);
 
-        hfo.start();
-        hfo.stop(time + ga + gs + gr);
+            noise.start();
+            noise.stop(time + gain_attack + gain_sustain + gain_release);
+        }
     }
 
     if (lfo) {
