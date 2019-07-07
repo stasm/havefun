@@ -5,12 +5,12 @@ interface Oscillator {
     gain_attack: number;
     gain_sustain: number;
     gain_release: number;
-    detune_cents: number;
+    detune_amount: number;
+    detune_lfo: boolean;
     freq_enabled: boolean;
     freq_attack: number;
     freq_sustain: number;
     freq_release: number;
-    lfo_detune: boolean;
 }
 
 interface Instrument {
@@ -37,7 +37,7 @@ function create_instrument(): Instrument {
     let $type = $(`input[name="master-filter-type"]:checked`)! as HTMLInputElement;
     let $freq = $(`#master-filter-freq`)! as HTMLInputElement;
     let $q = $(`#master-filter-q`)! as HTMLInputElement;
-    let $detune = $(`input[name="master-lfo-filter-detune"]`)! as HTMLInputElement;
+    let $detune = $(`input[name="master-filter-detune-lfo"]`)! as HTMLInputElement;
 
     let $lfo = $('input[name="master-lfo-enabled"]')! as HTMLInputElement;
     let $lg = $('input[name="master-lfo-amount"]')! as HTMLInputElement;
@@ -55,26 +55,25 @@ function create_instrument(): Instrument {
         let $gs = $(`#osc${i}-gain-sustain`)! as HTMLInputElement;
         let $gr = $(`#osc${i}-gain-release`)! as HTMLInputElement;
 
-        let $fd = $(`#osc${i}-freq-detune`)! as HTMLInputElement;
+        let $da = $(`input[name="osc${i}-detune-amount`)! as HTMLInputElement;
+        let $dl = $(`input[name="osc${i}-detune-lfo`)! as HTMLInputElement;
 
         let $fe = $(`#osc${i}-freq-env`)! as HTMLInputElement;
         let $fa = $(`#osc${i}-freq-attack`)! as HTMLInputElement;
         let $fs = $(`#osc${i}-freq-sustain`)! as HTMLInputElement;
         let $fr = $(`#osc${i}-freq-release`)! as HTMLInputElement;
 
-        let $ld = $(`input[name="master-lfo-osc${i}-detune`)! as HTMLInputElement;
-
         oscillators.push({
             gain_amount: parseInt($gg.value),
             gain_attack: parseInt($ga.value),
             gain_sustain: parseInt($gs.value),
             gain_release: parseInt($gr.value),
-            detune_cents: parseInt($fd.value),
+            detune_amount: parseInt($da.value),
+            detune_lfo: $dl.checked,
             freq_enabled: $fe.checked,
             freq_attack: parseInt($fa.value),
             freq_sustain: parseInt($fs.value),
             freq_release: parseInt($fr.value),
-            lfo_detune: $ld.checked,
         });
     }
 
@@ -185,7 +184,7 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         amp.gain.exponentialRampToValueAtTime(0.00001, time + ga + gs + gr);
 
         // [-1265,1265] i.e. one octave down and one octave up.
-        let dc = 3 * (osc.detune_cents - 7.5) ** 3;
+        let dc = 3 * (osc.detune_amount - 7.5) ** 3;
         let fa = (osc.freq_attack / 9) ** 3;
         let fs = (osc.freq_sustain / 9) ** 3;
         let fr = (osc.freq_release / 6) ** 3;
@@ -193,7 +192,7 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         // The intrinsic value of detune…
         hfo.detune.value = dc;
         // …can be modulated by the LFO.
-        if (lfa && osc.lfo_detune) {
+        if (lfa && osc.detune_lfo) {
             lfa.connect(hfo.detune);
         }
 

@@ -117,9 +117,21 @@
                     <label>Detune</label>
                     <div class="row">
                         <label class="vertical">
-                            <input type="range" id="osc1-freq-detune" min="0" max="15" step="1" />
+                            <input
+                                type="range"
+                                name="osc1-detune-amount"
+                                min="0"
+                                max="15"
+                                step="1"
+                            />
                             Cents
                         </label>
+                        <div>
+                            <label class="horizontal">
+                                <input type="checkbox" name="osc1-detune-lfo" />
+                                LFO
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="group">
@@ -223,9 +235,21 @@
                     <label>Detune</label>
                     <div class="row">
                         <label class="vertical">
-                            <input type="range" id="osc2-freq-detune" min="0" max="15" step="1" />
+                            <input
+                                type="range"
+                                name="osc2-detune-amount"
+                                min="0"
+                                max="15"
+                                step="1"
+                            />
                             Cents
                         </label>
+                        <div>
+                            <label class="horizontal">
+                                <input type="checkbox" name="osc2-detune-lfo" />
+                                LFO
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="group">
@@ -375,6 +399,10 @@
                                 <input type="radio" name="master-filter-type" value="bandpass" />
                                 Bandpass
                             </label>
+                            <label class="horizontal">
+                                <input type="checkbox" name="master-filter-detune-lfo" />
+                                LFO
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -389,20 +417,6 @@
                             <input type="range" name="master-lfo-freq" min="0" max="15" />
                             Freq
                         </label>
-                        <div>
-                            <label class="horizontal">
-                                <input type="checkbox" name="master-lfo-filter-detune" />
-                                Filter Detune
-                            </label>
-                            <label class="horizontal">
-                                <input type="checkbox" name="master-lfo-osc1-detune" />
-                                Osc 1 Detune
-                            </label>
-                            <label class="horizontal">
-                                <input type="checkbox" name="master-lfo-osc2-detune" />
-                                Osc 2 Detune
-                            </label>
-                        </div>
                     </div>
                 </div>
             </div>
