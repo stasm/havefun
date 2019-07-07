@@ -138,12 +138,12 @@ function on_midi_message(message: WebMidi.MIDIMessageEvent) {
         case 240:
             break;
         case 144: {
-            let button = document.querySelector(`button.key[data-note="${note}"]`)!;
+            let button = document.querySelector(`button.key[data-note="${note}"]`);
             if (velocity > 0) {
                 play_note(note);
-                button.classList.add("pressed");
+                button && button.classList.add("pressed");
             } else {
-                button.classList.remove("pressed");
+                button && button.classList.remove("pressed");
             }
         }
         default:
