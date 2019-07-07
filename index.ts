@@ -210,12 +210,12 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
         let amp = audio.createGain();
         amp.connect(master);
 
+        // Gain Envelope
+
         let gain_amount = (source[SourceParam.GainAmount] / 9) ** 3;
         let gain_attack = (source[SourceParam.GainAttack] / 9) ** 3;
         let gain_sustain = (source[SourceParam.GainSustain] / 9) ** 3;
         let gain_release = (source[SourceParam.GainRelease] / 6) ** 3;
-
-        duration = Math.max(duration, gain_attack + gain_sustain + gain_release);
 
         amp.gain.setValueAtTime(0, time);
         amp.gain.linearRampToValueAtTime(gain_amount, time + gain_attack);
@@ -231,11 +231,10 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
             hfo.type = source[SourceParam.OscillatorType];
             hfo.connect(amp);
 
+            // Detune
+
             // [-1265,1265] i.e. one octave down and one octave up.
             let dc = 3 * (source[SourceParam.DetuneAmount] - 7.5) ** 3;
-            let fa = (source[SourceParam.FreqAttack] / 9) ** 3;
-            let fs = (source[SourceParam.FreqSustain] / 9) ** 3;
-            let fr = (source[SourceParam.FreqRelease] / 6) ** 3;
             // The intrinsic value of detune…
             hfo.detune.value = dc;
             // …can be modulated by the LFO.
@@ -243,6 +242,11 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
                 lfa.connect(hfo.detune);
             }
 
+            // Frequency Envelope
+
+            let fa = (source[SourceParam.FreqAttack] / 9) ** 3;
+            let fs = (source[SourceParam.FreqSustain] / 9) ** 3;
+            let fr = (source[SourceParam.FreqRelease] / 6) ** 3;
             if (source[SourceParam.FreqEnabled]) {
                 hfo.frequency.linearRampToValueAtTime(0, time);
                 hfo.frequency.linearRampToValueAtTime(freq, time + fa);
@@ -263,6 +267,8 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
             noise.start();
             noise.stop(time + gain_attack + gain_sustain + gain_release);
         }
+
+        duration = Math.max(duration, gain_attack + gain_sustain + gain_release);
     }
 
     if (lfo) {
