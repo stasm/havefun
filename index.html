@@ -57,6 +57,160 @@
     <h1>Have Fun Audio Editor</h1>
     <div class="row">
         <div class="group">
+            <h2>Options</h2>
+            <div>
+                <button onclick="export_instr();">Export instrument</button>
+            </div>
+            <p><em>See console.</em></p>
+        </div>
+        <div class="group">
+            <h2>Master</h2>
+            <div class="row">
+                <div class="group">
+                    <label>Gain</label>
+                    <div class="row">
+                        <label class="vertical">
+                            <input
+                                type="range"
+                                id="master-gain-amount"
+                                value="7"
+                                min="0"
+                                max="15"
+                                step="1"
+                            />
+                            Amnt
+                        </label>
+                    </div>
+                </div>
+                <div class="group">
+                    <label><input type="checkbox" id="master-filter-enabled" /> Filter</label>
+                    <div class="row">
+                        <label class="vertical">
+                            <input type="range" id="master-filter-freq" min="0" max="15" step="1" />
+                            Freq
+                        </label>
+                        <label class="vertical">
+                            <input type="range" id="master-filter-q" min="0" max="15" step="1" />
+                            Q
+                        </label>
+                        <div>
+                            <label class="horizontal">
+                                <input
+                                    type="radio"
+                                    name="master-filter-type"
+                                    value="lowpass"
+                                    checked
+                                />
+                                Lowpass
+                            </label>
+                            <label class="horizontal">
+                                <input type="radio" name="master-filter-type" value="highpass" />
+                                Highpass
+                            </label>
+                            <label class="horizontal">
+                                <input type="radio" name="master-filter-type" value="bandpass" />
+                                Bandpass
+                            </label>
+                            <label class="horizontal">
+                                <input type="checkbox" name="master-filter-detune-lfo" />
+                                LFO
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="group">
+                    <label><input type="checkbox" name="master-lfo-enabled" /> LFO</label>
+                    <div class="row">
+                        <label class="vertical">
+                            <input type="range" name="master-lfo-amount" min="0" max="15" />
+                            Amnt
+                        </label>
+                        <label class="vertical">
+                            <input type="range" name="master-lfo-freq" min="0" max="15" />
+                            Freq
+                        </label>
+                        <div>
+                            <label class="horizontal">
+                                <input type="radio" name="master-lfo-type" value="sine" checked />
+                                Sine
+                            </label>
+                            <label class="horizontal">
+                                <input type="radio" name="master-lfo-type" value="square" />
+                                Square
+                            </label>
+                            <label class="horizontal">
+                                <input type="radio" name="master-lfo-type" value="sawtooth" />
+                                Sawtooth
+                            </label>
+                            <label class="horizontal">
+                                <input type="radio" name="master-lfo-type" value="triangle" />
+                                Triangle
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="group">
+            <h2>Noise</h2></h2>
+            <div class="row">
+                <div class="group">
+                    <label>Gain</label>
+                    <div class="row">
+                        <label class="vertical">
+                            <input
+                                type="range"
+                                name="noise-gain-amount"
+                                value="0"
+                                min="0"
+                                max="15"
+                                step="1"
+                            />
+                            Amnt
+                        </label>
+                    </div>
+                </div>
+                <div class="group">
+                    <label>Gain Envelope</label>
+                    <div class="row">
+                        <label class="vertical">
+                            <input
+                                type="range"
+                                name="noise-gain-attack"
+                                value="7"
+                                min="0"
+                                max="15"
+                                step="1"
+                            />
+                            Atck
+                        </label>
+                        <label class="vertical">
+                            <input
+                                type="range"
+                                name="noise-gain-sustain"
+                                value="7"
+                                min="0"
+                                max="15"
+                                step="1"
+                            />
+                            Sust
+                        </label>
+                        <label class="vertical">
+                            <input
+                                type="range"
+                                name="noise-gain-release"
+                                value="7"
+                                min="0"
+                                max="15"
+                                step="1"
+                            />
+                            Rels
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="group">
             <h2>Oscillator 1</h2>
             <div class="row">
                 <div class="group">
@@ -332,159 +486,6 @@
                         </label>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="group">
-            <h2>Noise</h2>
-            <div class="row">
-                <div class="group">
-                    <label>Gain</label>
-                    <div class="row">
-                        <label class="vertical">
-                            <input
-                                type="range"
-                                name="noise-gain-amount"
-                                value="0"
-                                min="0"
-                                max="15"
-                                step="1"
-                            />
-                            Amnt
-                        </label>
-                    </div>
-                </div>
-                <div class="group">
-                    <label>Gain Envelope</label>
-                    <div class="row">
-                        <label class="vertical">
-                            <input
-                                type="range"
-                                name="noise-gain-attack"
-                                value="7"
-                                min="0"
-                                max="15"
-                                step="1"
-                            />
-                            Atck
-                        </label>
-                        <label class="vertical">
-                            <input
-                                type="range"
-                                name="noise-gain-sustain"
-                                value="7"
-                                min="0"
-                                max="15"
-                                step="1"
-                            />
-                            Sust
-                        </label>
-                        <label class="vertical">
-                            <input
-                                type="range"
-                                name="noise-gain-release"
-                                value="7"
-                                min="0"
-                                max="15"
-                                step="1"
-                            />
-                            Rels
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="group">
-            <h2>Master</h2>
-            <div class="row">
-                <div class="group">
-                    <label>Gain</label>
-                    <div class="row">
-                        <label class="vertical">
-                            <input
-                                type="range"
-                                id="master-gain-amount"
-                                value="7"
-                                min="0"
-                                max="15"
-                                step="1"
-                            />
-                            Amnt
-                        </label>
-                    </div>
-                </div>
-                <div class="group">
-                    <label><input type="checkbox" id="master-filter-enabled" /> Filter</label>
-                    <div class="row">
-                        <label class="vertical">
-                            <input type="range" id="master-filter-freq" min="0" max="15" step="1" />
-                            Freq
-                        </label>
-                        <label class="vertical">
-                            <input type="range" id="master-filter-q" min="0" max="15" step="1" />
-                            Q
-                        </label>
-                        <div>
-                            <label class="horizontal">
-                                <input
-                                    type="radio"
-                                    name="master-filter-type"
-                                    value="lowpass"
-                                    checked
-                                />
-                                Lowpass
-                            </label>
-                            <label class="horizontal">
-                                <input type="radio" name="master-filter-type" value="highpass" />
-                                Highpass
-                            </label>
-                            <label class="horizontal">
-                                <input type="radio" name="master-filter-type" value="bandpass" />
-                                Bandpass
-                            </label>
-                            <label class="horizontal">
-                                <input type="checkbox" name="master-filter-detune-lfo" />
-                                LFO
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="group">
-                    <label><input type="checkbox" name="master-lfo-enabled" /> LFO</label>
-                    <div class="row">
-                        <label class="vertical">
-                            <input type="range" name="master-lfo-amount" min="0" max="15" />
-                            Amnt
-                        </label>
-                        <label class="vertical">
-                            <input type="range" name="master-lfo-freq" min="0" max="15" />
-                            Freq
-                        </label>
-                        <div>
-                            <label class="horizontal">
-                                <input type="radio" name="master-lfo-type" value="sine" checked />
-                                Sine
-                            </label>
-                            <label class="horizontal">
-                                <input type="radio" name="master-lfo-type" value="square" />
-                                Square
-                            </label>
-                            <label class="horizontal">
-                                <input type="radio" name="master-lfo-type" value="sawtooth" />
-                                Sawtooth
-                            </label>
-                            <label class="horizontal">
-                                <input type="radio" name="master-lfo-type" value="triangle" />
-                                Triangle
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="group">
-            <h2>Options</h2>
-            <div>
-                <button onclick="export_instr();">Export instrument to console</button>
             </div>
         </div>
     </div>
