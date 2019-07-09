@@ -4,7 +4,7 @@
     "private": true,
     "description": "Have Fun Audio Editor",
     "scripts": {
-        "serve": "live-server --port=1234 --no-browser --quiet",
+        "serve": "live-server --port=2345 --no-browser --quiet",
         "compile:watch": "tsc --watch -p .",
         "start": "npm-run-all --parallel compile:watch serve"
     },
