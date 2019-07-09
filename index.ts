@@ -165,7 +165,7 @@ function create_instrument(): Instrument {
 
 function play_instr(audio: AudioContext, instr: Instrument, note: number, offset: number) {
     let time = audio.currentTime + offset;
-    let duration = 0;
+    let total_duration = 0;
 
     let master = audio.createGain();
     master.gain.value = (instr[InstrumentParam.MasterGainAmount] / 9) ** 3;
@@ -209,14 +209,12 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
         let gain_attack = (source[SourceParam.GainAttack] / 9) ** 3;
         let gain_sustain = (source[SourceParam.GainSustain] / 9) ** 3;
         let gain_release = (source[SourceParam.GainRelease] / 6) ** 3;
+        let gain_duration = gain_attack + gain_sustain + gain_release;
 
         amp.gain.setValueAtTime(0, time);
         amp.gain.linearRampToValueAtTime(gain_amount, time + gain_attack);
         amp.gain.setValueAtTime(gain_amount, time + gain_attack + gain_sustain);
-        amp.gain.exponentialRampToValueAtTime(
-            0.00001,
-            time + gain_attack + gain_sustain + gain_release
-        );
+        amp.gain.exponentialRampToValueAtTime(0.00001, time + gain_duration);
 
         // XXX TypeScript doesn't recognize source[SourceParam.Kind] as the discriminant.
         if (source[0] === SourceKind.Oscillator) {
@@ -252,7 +250,7 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
             }
 
             hfo.start();
-            hfo.stop(time + gain_attack + gain_sustain + gain_release);
+            hfo.stop(time + gain_duration);
         } else {
             let noise = audio.createBufferSource();
             noise.buffer = lazy_noise_buffer(audio);
@@ -260,15 +258,17 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
             noise.connect(amp);
 
             noise.start();
-            noise.stop(time + gain_attack + gain_sustain + gain_release);
+            noise.stop(time + gain_duration);
         }
 
-        duration = Math.max(duration, gain_attack + gain_sustain + gain_release);
+        if (gain_duration > total_duration) {
+            total_duration = gain_duration;
+        }
     }
 
     if (lfo) {
         lfo.start();
-        lfo.stop(time + duration);
+        lfo.stop(time + total_duration);
     }
 }
 
