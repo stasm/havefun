@@ -163,7 +163,7 @@ function create_instrument(): Instrument {
     return (instrument as unknown) as Instrument;
 }
 
-function play_instr(audio: AudioContext, instr: Instrument, freq: number, offset: number) {
+function play_instr(audio: AudioContext, instr: Instrument, note: number, offset: number) {
     let time = audio.currentTime + offset;
     let duration = 0;
 
@@ -243,6 +243,7 @@ function play_instr(audio: AudioContext, instr: Instrument, freq: number, offset
             }
 
             // Frequency Envelope
+            let freq = 440 * 2 ** ((note - 69) / 12);
 
             let fa = (source[SourceParam.FreqAttack] / 9) ** 3;
             let fs = (source[SourceParam.FreqSustain] / 9) ** 3;
@@ -277,14 +278,9 @@ function play_instr(audio: AudioContext, instr: Instrument, freq: number, offset
     }
 }
 
-function freq_from_note(note: number) {
-    return 440 * 2 ** ((note - 69) / 12);
-}
-
 function play_note(note: number) {
-    let freq = freq_from_note(note);
     let instr = create_instrument();
-    play_instr(instr, freq, 0);
+    play_instr(audio, instr, note, 0);
 }
 
 function play_key(evt: Event) {
