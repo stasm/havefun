@@ -168,22 +168,22 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
     let duration = 0;
 
     let master = audio.createGain();
-    let gg = (instr[InstrumentParam.MasterGainAmount] / 9) ** 3;
-    master.gain.value = gg;
+    let master_gain = (instr[InstrumentParam.MasterGainAmount] / 9) ** 3;
+    master.gain.value = master_gain;
 
     let lfa, lfo;
     if (instr[InstrumentParam.LFOEnabled]) {
         // [27, 5832];
-        let lg = (instr[InstrumentParam.LFOAmount] + 3) ** 3;
+        let amount = (instr[InstrumentParam.LFOAmount] + 3) ** 3;
         // [0, 125]
-        let lf = (instr[InstrumentParam.LFOFreq] / 3) ** 3;
+        let freq = (instr[InstrumentParam.LFOFreq] / 3) ** 3;
 
         lfo = audio.createOscillator();
         lfo.type = instr[InstrumentParam.LFOType];
-        lfo.frequency.value = lf;
+        lfo.frequency.value = freq;
 
         lfa = audio.createGain();
-        lfa.gain.value = lg;
+        lfa.gain.value = amount;
 
         lfo.connect(lfa);
     }
@@ -192,16 +192,16 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
         let freq = 2 ** instr[InstrumentParam.FilterFreq];
         let q = instr[InstrumentParam.FilterQ] ** 1.5;
 
-        let flt = audio.createBiquadFilter();
-        flt.type = instr[InstrumentParam.FilterType];
-        flt.frequency.value = freq;
-        flt.Q.value = q;
+        let filter = audio.createBiquadFilter();
+        filter.type = instr[InstrumentParam.FilterType];
+        filter.frequency.value = freq;
+        filter.Q.value = q;
         if (lfa && instr[InstrumentParam.FilterDetuneLFO]) {
-            lfa.connect(flt.detune);
+            lfa.connect(filter.detune);
         }
 
-        master.connect(flt);
-        flt.connect(audio.destination);
+        master.connect(filter);
+        filter.connect(audio.destination);
     } else {
         master.connect(audio.destination);
     }
@@ -234,9 +234,9 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
             // Detune
 
             // [-1265,1265] i.e. one octave down and one octave up.
-            let dc = 3 * (source[SourceParam.DetuneAmount] - 7.5) ** 3;
+            let detune_amount = 3 * (source[SourceParam.DetuneAmount] - 7.5) ** 3;
             // The intrinsic value of detune…
-            hfo.detune.value = dc;
+            hfo.detune.value = detune_amount;
             // …can be modulated by the LFO.
             if (lfa && source[SourceParam.DetuneLFO]) {
                 lfa.connect(hfo.detune);
@@ -245,14 +245,17 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
             // Frequency Envelope
             let freq = 440 * 2 ** ((note - 69) / 12);
 
-            let fa = (source[SourceParam.FreqAttack] / 9) ** 3;
-            let fs = (source[SourceParam.FreqSustain] / 9) ** 3;
-            let fr = (source[SourceParam.FreqRelease] / 6) ** 3;
+            let freq_attack = (source[SourceParam.FreqAttack] / 9) ** 3;
+            let freq_sustain = (source[SourceParam.FreqSustain] / 9) ** 3;
+            let freq_release = (source[SourceParam.FreqRelease] / 6) ** 3;
             if (source[SourceParam.FreqEnabled]) {
                 hfo.frequency.linearRampToValueAtTime(0, time);
-                hfo.frequency.linearRampToValueAtTime(freq, time + fa);
-                hfo.frequency.setValueAtTime(freq, time + fa + fs);
-                hfo.frequency.exponentialRampToValueAtTime(0.00001, time + fa + fs + fr);
+                hfo.frequency.linearRampToValueAtTime(freq, time + freq_attack);
+                hfo.frequency.setValueAtTime(freq, time + freq_attack + freq_sustain);
+                hfo.frequency.exponentialRampToValueAtTime(
+                    0.00001,
+                    time + freq_attack + freq_sustain + freq_release
+                );
             } else {
                 hfo.frequency.setValueAtTime(freq, time);
             }
