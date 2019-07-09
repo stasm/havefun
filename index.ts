@@ -163,7 +163,7 @@ function create_instrument(): Instrument {
     return (instrument as unknown) as Instrument;
 }
 
-function play_instr(instr: Instrument, freq: number, offset: number) {
+function play_instr(audio: AudioContext, instr: Instrument, freq: number, offset: number) {
     let time = audio.currentTime + offset;
     let duration = 0;
 
@@ -260,7 +260,7 @@ function play_instr(instr: Instrument, freq: number, offset: number) {
             hfo.stop(time + gain_attack + gain_sustain + gain_release);
         } else {
             let noise = audio.createBufferSource();
-            noise.buffer = noise_buffer;
+            noise.buffer = lazy_noise_buffer(audio);
             noise.loop = true;
             noise.connect(amp);
 
@@ -339,10 +339,14 @@ function $(selector: string) {
     return document.querySelector(selector);
 }
 
-let buffer_size = 2 * audio.sampleRate;
-let noise_buffer = audio.createBuffer(1, buffer_size, audio.sampleRate);
-let output = noise_buffer.getChannelData(0);
-
-for (var i = 0; i < buffer_size; i++) {
-    output[i] = Math.random() * 2 - 1;
+let noise_buffer: AudioBuffer;
+function lazy_noise_buffer(audio: AudioContext) {
+    if (!noise_buffer) {
+        noise_buffer = audio.createBuffer(1, audio.sampleRate * 2, audio.sampleRate);
+        let channel = noise_buffer.getChannelData(0);
+        for (var i = 0; i < channel.length; i++) {
+            channel[i] = Math.random() * 2 - 1;
+        }
+    }
+    return noise_buffer;
 }
