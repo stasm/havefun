@@ -1,11 +1,13 @@
 import {Action} from "./actions.js";
 import {Camera} from "./com_camera.js";
 import {BaseComponent, Get} from "./com_index.js";
+import {Pan} from "./com_pan.js";
 import {RenderGeneric} from "./com_render.js";
 import {Transform, transform} from "./com_transform.js";
 import {Zoom} from "./com_zoom.js";
 import {Rad, Vec2} from "./mth_index.js";
 import {sys_camera} from "./sys_camera.js";
+import {sys_pan} from "./sys_pan.js";
 import {sys_render} from "./sys_render.js";
 import {sys_transform} from "./sys_transform.js";
 import {sys_zoom} from "./sys_zoom.js";
@@ -39,6 +41,7 @@ export class Game extends Array<Array<BaseComponent>> {
     public [Get.Render]: Array<RenderGeneric> = [];
     public [Get.Camera]: Array<Camera> = [];
     public [Get.Zoom]: Array<Zoom> = [];
+    public [Get.Pan]: Array<Pan> = [];
 
     public canvas: HTMLCanvasElement = document.querySelector("canvas")!;
     public dispatch: Dispatch;
@@ -89,6 +92,7 @@ export class Game extends Array<Array<BaseComponent>> {
 
     frame_update(delta: number) {
         sys_zoom(this, delta);
+        sys_pan(this, delta);
         sys_transform(this, delta);
         sys_camera(this, delta);
         sys_render(this, delta);
