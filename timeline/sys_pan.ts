@@ -17,7 +17,7 @@ function update(game: Game, entity: Entity, delta: number) {
     let transform = game[Get.Transform][entity];
     let pan = game[Get.Pan][entity];
 
-    if (game.input.mouse_0 && game.input.mouse_x !== 0) {
+    if (game.input.mouse_1 && game.input.mouse_x !== 0) {
         let current_translation = get_translation([0, 0], transform.world);
         transform.translation = [
             current_translation[0] - game.input.mouse_x * pan.speed * delta,
@@ -28,7 +28,7 @@ function update(game: Game, entity: Entity, delta: number) {
         game.dispatch(Action.PAN_START);
     }
 
-    if (!game.input.mouse_0) {
+    if (!game.input.mouse_1) {
         game.dispatch(Action.PAN_STOP);
     }
 }
