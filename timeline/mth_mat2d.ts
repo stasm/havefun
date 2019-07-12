@@ -162,3 +162,9 @@ export function translate(out: Mat2D, a: Mat2D, v: Vec2) {
     out[5] = a1 * v0 + a3 * v1 + a5;
     return out;
 }
+
+export function get_scaling(out: Vec2, a: Mat2D) {
+    out[0] = Math.hypot(a[0], a[1]);
+    out[1] = Math.hypot(a[2], a[3]);
+    return out;
+}

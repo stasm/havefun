@@ -9,4 +9,5 @@ export const enum Get {
     Transform = 1,
     Render = 2,
     Camera = 4,
+    Zoom = 8,
 }

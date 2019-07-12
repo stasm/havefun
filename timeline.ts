@@ -1,5 +1,6 @@
 import {camera} from "./timeline/com_camera.js";
 import {render_rect} from "./timeline/com_render.js";
+import {zoom} from "./timeline/com_zoom.js";
 import {Game} from "./timeline/game.js";
 
 let game = new Game();
@@ -7,12 +8,22 @@ let game = new Game();
 game.add({
     translation: [0, 0],
     scale: [1, 1],
-    using: [camera()],
+    using: [camera(), zoom(1.1)],
 });
 
 game.add({
     translation: [100, 100],
-    scale: [2, 2],
+    scale: [1, 2],
+    using: [render_rect("#f00")],
+});
+game.add({
+    translation: [110, 120],
+    scale: [1, 2],
+    using: [render_rect("#f00")],
+});
+game.add({
+    translation: [130, 140],
+    scale: [1, 2],
     using: [render_rect("#f00")],
 });
 

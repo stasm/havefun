@@ -3,10 +3,12 @@ import {Camera} from "./com_camera.js";
 import {BaseComponent, Get} from "./com_index.js";
 import {RenderGeneric} from "./com_render.js";
 import {Transform, transform} from "./com_transform.js";
+import {Zoom} from "./com_zoom.js";
 import {Rad, Vec2} from "./mth_index.js";
 import {sys_camera} from "./sys_camera.js";
 import {sys_render} from "./sys_render.js";
 import {sys_transform} from "./sys_transform.js";
+import {sys_zoom} from "./sys_zoom.js";
 
 export type Entity = number;
 
@@ -14,6 +16,7 @@ export interface Input {
     [k: string]: number;
     mouse_x: number;
     mouse_y: number;
+    wheel_y: number;
 }
 
 type Mixin = (game: Game) => (entity: Entity) => void;
@@ -35,11 +38,12 @@ export class Game extends Array<Array<BaseComponent>> {
     public [Get.Transform]: Array<Transform> = [];
     public [Get.Render]: Array<RenderGeneric> = [];
     public [Get.Camera]: Array<Camera> = [];
+    public [Get.Zoom]: Array<Zoom> = [];
 
     public canvas: HTMLCanvasElement = document.querySelector("canvas")!;
     public dispatch: Dispatch;
     public ctx: CanvasRenderingContext2D;
-    public input: Input = {mouse_x: 0, mouse_y: 0};
+    public input: Input = {mouse_x: 0, mouse_y: 0, wheel_y: 0};
     public camera?: Camera;
 
     private raf: number = 0;
@@ -63,8 +67,12 @@ export class Game extends Array<Array<BaseComponent>> {
             this.input.mouse_x = evt.movementX;
             this.input.mouse_y = evt.movementY;
         });
+        this.canvas.addEventListener("wheel", (evt: WheelEvent) => {
+            this.input.wheel_y = evt.deltaY;
+        });
 
         this.ctx = this.canvas.getContext("2d")!;
+        this.ctx.imageSmoothingEnabled = false;
     }
 
     create_entity(mask: number) {
@@ -80,6 +88,7 @@ export class Game extends Array<Array<BaseComponent>> {
     }
 
     frame_update(delta: number) {
+        sys_zoom(this, delta);
         sys_transform(this, delta);
         sys_camera(this, delta);
         sys_render(this, delta);
@@ -95,6 +104,7 @@ export class Game extends Array<Array<BaseComponent>> {
             last = now;
             this.input.mouse_x = 0;
             this.input.mouse_y = 0;
+            this.input.wheel_y = 0;
             this.raf = requestAnimationFrame(tick);
         };
 
