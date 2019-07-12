@@ -4,7 +4,6 @@ import {Mat2D} from "./mth_index.js";
 import {create} from "./mth_mat2d.js";
 
 export interface Camera extends BaseComponent {
-    projection: Mat2D;
     view: Mat2D;
     pv: Mat2D;
 }

@@ -67,16 +67,6 @@ export function multiply(out: Mat2D, a: Mat2D, b: Mat2D) {
     return out;
 }
 
-export function projection(out: Mat2D, width: number, height: number) {
-    out[0] = 2 / width;
-    out[1] = 0;
-    out[2] = 0;
-    out[3] = -2 / height;
-    out[4] = -1;
-    out[5] = 1;
-    return out;
-}
-
 export function from_rotation(out: Mat2D, rad: Rad) {
     let s = Math.sin(rad),
         c = Math.cos(rad);
