@@ -238,7 +238,7 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
             let freq_sustain = (source[SourceParam.FreqSustain] / 9) ** 3;
             let freq_release = (source[SourceParam.FreqRelease] / 6) ** 3;
             if (source[SourceParam.FreqEnabled]) {
-                hfo.frequency.linearRampToValueAtTime(0, time);
+                hfo.frequency.setValueAtTime(0, time);
                 hfo.frequency.linearRampToValueAtTime(freq, time + freq_attack);
                 hfo.frequency.setValueAtTime(freq, time + freq_attack + freq_sustain);
                 hfo.frequency.exponentialRampToValueAtTime(
@@ -249,7 +249,7 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
                 hfo.frequency.setValueAtTime(freq, time);
             }
 
-            hfo.start();
+            hfo.start(time);
             hfo.stop(time + gain_duration);
         } else {
             let noise = audio.createBufferSource();
@@ -257,7 +257,7 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
             noise.loop = true;
             noise.connect(amp);
 
-            noise.start();
+            noise.start(time);
             noise.stop(time + gain_duration);
         }
 
@@ -267,7 +267,7 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
     }
 
     if (lfo) {
-        lfo.start();
+        lfo.start(time);
         lfo.stop(time + total_duration);
     }
 }
@@ -286,7 +286,7 @@ for (let key of document.querySelectorAll(".key")) {
     key.addEventListener("click", play_key);
 }
 
-function export_instr() {
+export function export_instr() {
     let instr = create_instrument();
     console.log(JSON.stringify(instr));
 }
