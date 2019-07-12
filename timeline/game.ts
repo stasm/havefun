@@ -1,4 +1,4 @@
-import {Action} from "./actions.js";
+import {Action, effect} from "./actions.js";
 import {Camera} from "./com_camera.js";
 import {BaseComponent, Get} from "./com_index.js";
 import {Pan} from "./com_pan.js";
@@ -59,7 +59,7 @@ export class Game extends Array<Array<BaseComponent>> {
         );
 
         this.dispatch = (action: Action, ...args: Array<unknown>) => {
-            console.log(action, args);
+            effect(this, action, args);
         };
 
         window.addEventListener("keydown", evt => (this.input[evt.code] = 1));

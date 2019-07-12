@@ -1,3 +1,4 @@
+import {Action} from "./actions.js";
 import {Get} from "./com_index.js";
 import {Entity, Game} from "./game.js";
 import {get_translation} from "./mth_mat2d.js";
@@ -23,5 +24,11 @@ function update(game: Game, entity: Entity, delta: number) {
             current_translation[1],
         ];
         transform.dirty = true;
+
+        game.dispatch(Action.PAN_START);
+    }
+
+    if (!game.input.mouse_0) {
+        game.dispatch(Action.PAN_STOP);
     }
 }
