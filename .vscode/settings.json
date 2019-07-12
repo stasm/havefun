@@ -1,0 +1,10 @@
+{
+    "files.exclude": {
+        "**/*.js": true,
+        "**/*.js.map": true
+    },
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    }
+}
