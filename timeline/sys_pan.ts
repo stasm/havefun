@@ -17,18 +17,17 @@ function update(game: Game, entity: Entity, delta: number) {
     let transform = game[Get.Transform][entity];
     let pan = game[Get.Pan][entity];
 
-    if (game.input.mouse_1 && game.input.mouse_x !== 0) {
-        let current_translation = get_translation([0, 0], transform.world);
-        transform.translation = [
-            current_translation[0] - game.input.mouse_x * pan.speed * delta,
-            current_translation[1],
-        ];
-        transform.dirty = true;
-
+    if (game.input.mouse_1) {
+        if (game.input.mouse_x_delta !== 0) {
+            let current_translation = get_translation([0, 0], transform.world);
+            transform.translation = [
+                current_translation[0] - game.input.mouse_x_delta * pan.speed * delta,
+                current_translation[1],
+            ];
+            transform.dirty = true;
+        }
         game.dispatch(Action.PAN_START);
-    }
-
-    if (!game.input.mouse_1) {
+    } else if (game.input.mouse_1_up) {
         game.dispatch(Action.PAN_STOP);
     }
 }

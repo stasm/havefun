@@ -16,9 +16,9 @@ export type Entity = number;
 
 export interface Input {
     [k: string]: number;
-    mouse_x: number;
-    mouse_y: number;
-    wheel_y: number;
+    mouse_x_delta: number;
+    mouse_y_delta: number;
+    wheel_y_delta: number;
 }
 
 type Mixin = (game: Game) => (entity: Entity) => void;
@@ -46,7 +46,7 @@ export class Game extends Array<Array<BaseComponent>> {
     public canvas: HTMLCanvasElement = document.querySelector("canvas")!;
     public dispatch: Dispatch;
     public ctx: CanvasRenderingContext2D;
-    public input: Input = {mouse_x: 0, mouse_y: 0, wheel_y: 0};
+    public input: Input = {mouse_x_delta: 0, mouse_y_delta: 0, wheel_y_delta: 0};
     public camera?: Camera;
 
     private raf: number = 0;
@@ -64,14 +64,20 @@ export class Game extends Array<Array<BaseComponent>> {
 
         window.addEventListener("keydown", evt => (this.input[evt.code] = 1));
         window.addEventListener("keyup", evt => (this.input[evt.code] = 0));
-        this.canvas.addEventListener("mousedown", evt => (this.input[`mouse_${evt.button}`] = 1));
-        this.canvas.addEventListener("mouseup", evt => (this.input[`mouse_${evt.button}`] = 0));
+        this.canvas.addEventListener("mousedown", evt => {
+            this.input[`mouse_${evt.button}_down`] = 1;
+            this.input[`mouse_${evt.button}`] = 1;
+        });
+        this.canvas.addEventListener("mouseup", evt => {
+            this.input[`mouse_${evt.button}_up`] = 1;
+            this.input[`mouse_${evt.button}`] = 0;
+        });
         this.canvas.addEventListener("mousemove", evt => {
-            this.input.mouse_x = evt.movementX;
-            this.input.mouse_y = evt.movementY;
+            this.input.mouse_x_delta = evt.movementX;
+            this.input.mouse_y_delta = evt.movementY;
         });
         this.canvas.addEventListener("wheel", (evt: WheelEvent) => {
-            this.input.wheel_y = evt.deltaY;
+            this.input.wheel_y_delta = evt.deltaY;
         });
 
         this.ctx = this.canvas.getContext("2d")!;
@@ -105,10 +111,13 @@ export class Game extends Array<Array<BaseComponent>> {
             let delta = (now - last) / 1000;
             this.frame_update(delta);
 
+            for (let name in this.input) {
+                if (name.endsWith("_delta") || name.endsWith("_down") || name.endsWith("_up")) {
+                    this.input[name] = 0;
+                }
+            }
+
             last = now;
-            this.input.mouse_x = 0;
-            this.input.mouse_y = 0;
-            this.input.wheel_y = 0;
             this.raf = requestAnimationFrame(tick);
         };
 
