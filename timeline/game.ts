@@ -9,6 +9,7 @@ import {Rad, Vec2} from "./mth_index.js";
 import {sys_camera} from "./sys_camera.js";
 import {sys_pan} from "./sys_pan.js";
 import {sys_render} from "./sys_render.js";
+import {sys_select} from "./sys_select.js";
 import {sys_transform} from "./sys_transform.js";
 import {sys_zoom} from "./sys_zoom.js";
 
@@ -16,6 +17,8 @@ export type Entity = number;
 
 export interface Input {
     [k: string]: number;
+    mouse_x: number;
+    mouse_y: number;
     mouse_x_delta: number;
     mouse_y_delta: number;
     wheel_y_delta: number;
@@ -46,8 +49,15 @@ export class Game extends Array<Array<BaseComponent>> {
     public canvas: HTMLCanvasElement = document.querySelector("canvas")!;
     public dispatch: Dispatch;
     public ctx: CanvasRenderingContext2D;
-    public input: Input = {mouse_x_delta: 0, mouse_y_delta: 0, wheel_y_delta: 0};
+    public input: Input = {
+        mouse_x: 0,
+        mouse_y: 0,
+        mouse_x_delta: 0,
+        mouse_y_delta: 0,
+        wheel_y_delta: 0,
+    };
     public camera?: Camera;
+    public selection?: Entity;
 
     private raf: number = 0;
 
@@ -64,6 +74,10 @@ export class Game extends Array<Array<BaseComponent>> {
 
         window.addEventListener("keydown", evt => (this.input[evt.code] = 1));
         window.addEventListener("keyup", evt => (this.input[evt.code] = 0));
+        this.canvas.addEventListener("mouseenter", evt => {
+            this.input.mouse_x = evt.offsetX;
+            this.input.mouse_y = evt.offsetY;
+        });
         this.canvas.addEventListener("mousedown", evt => {
             this.input[`mouse_${evt.button}_down`] = 1;
             this.input[`mouse_${evt.button}`] = 1;
@@ -73,6 +87,8 @@ export class Game extends Array<Array<BaseComponent>> {
             this.input[`mouse_${evt.button}`] = 0;
         });
         this.canvas.addEventListener("mousemove", evt => {
+            this.input.mouse_x += evt.movementX;
+            this.input.mouse_y += evt.movementY;
             this.input.mouse_x_delta = evt.movementX;
             this.input.mouse_y_delta = evt.movementY;
         });
@@ -99,6 +115,7 @@ export class Game extends Array<Array<BaseComponent>> {
     frame_update(delta: number) {
         sys_zoom(this, delta);
         sys_pan(this, delta);
+        sys_select(this, delta);
         sys_transform(this, delta);
         sys_camera(this, delta);
         sys_render(this, delta);
