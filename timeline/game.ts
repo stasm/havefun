@@ -1,6 +1,7 @@
 import {Action, effect} from "./actions.js";
 import {Camera} from "./com_camera.js";
 import {BaseComponent, Get} from "./com_index.js";
+import {Overlay} from "./com_overlay.js";
 import {Pan} from "./com_pan.js";
 import {RenderGeneric} from "./com_render.js";
 import {Transform, transform} from "./com_transform.js";
@@ -49,6 +50,7 @@ export class Game extends Array<Array<BaseComponent>> {
     public [Get.Camera]: Array<Camera> = [];
     public [Get.Zoom]: Array<Zoom> = [];
     public [Get.Pan]: Array<Pan> = [];
+    public [Get.Overlay]: Array<Overlay> = [];
 
     public canvas: HTMLCanvasElement = document.querySelector("canvas")!;
     public dispatch: Dispatch;

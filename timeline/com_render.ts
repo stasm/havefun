@@ -1,27 +1,10 @@
 import {BaseComponent, Get} from "./com_index.js";
 import {Entity, Game} from "./game.js";
 
-export type RenderGeneric = RenderQuad | RenderRect;
+export type RenderGeneric = RenderRect;
 
 export const enum Render {
-    Quad,
     Rect,
-}
-
-export interface RenderQuad extends BaseComponent {
-    kind: Render.Quad;
-    color: string;
-}
-
-export function render_quad(color: string) {
-    return (game: Game) => (entity: Entity) => {
-        game.world[entity] |= Get.Render;
-        game[Get.Render][entity] = <RenderQuad>{
-            entity,
-            kind: Render.Quad,
-            color,
-        };
-    };
 }
 
 export interface RenderRect extends BaseComponent {

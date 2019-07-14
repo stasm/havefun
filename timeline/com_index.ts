@@ -11,4 +11,5 @@ export const enum Get {
     Camera = 4,
     Zoom = 8,
     Pan = 16,
+    Overlay = 32,
 }
