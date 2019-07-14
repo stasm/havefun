@@ -15,13 +15,17 @@ import {sys_zoom} from "./sys_zoom.js";
 
 export type Entity = number;
 
-export interface Input {
+export interface InputState {
     [k: string]: number;
     mouse_x: number;
     mouse_y: number;
-    mouse_x_delta: number;
-    mouse_y_delta: number;
-    wheel_y_delta: number;
+}
+
+export interface EventState {
+    [k: string]: number;
+    mouse_x: number;
+    mouse_y: number;
+    wheel_y: number;
 }
 
 type Mixin = (game: Game) => (entity: Entity) => void;
@@ -49,12 +53,14 @@ export class Game extends Array<Array<BaseComponent>> {
     public canvas: HTMLCanvasElement = document.querySelector("canvas")!;
     public dispatch: Dispatch;
     public ctx: CanvasRenderingContext2D;
-    public input: Input = {
+    public input: InputState = {
         mouse_x: 0,
         mouse_y: 0,
-        mouse_x_delta: 0,
-        mouse_y_delta: 0,
-        wheel_y_delta: 0,
+    };
+    public event: EventState = {
+        mouse_x: 0,
+        mouse_y: 0,
+        wheel_y: 0,
     };
     public camera?: Camera;
     public selection?: Entity;
@@ -75,24 +81,24 @@ export class Game extends Array<Array<BaseComponent>> {
         window.addEventListener("keydown", evt => (this.input[evt.code] = 1));
         window.addEventListener("keyup", evt => (this.input[evt.code] = 0));
         this.canvas.addEventListener("mousedown", evt => {
-            this.input[`mouse_${evt.button}_down`] = 1;
             this.input[`mouse_${evt.button}`] = 1;
+            this.event[`mouse_${evt.button}_down`] = 1;
             this.event_update();
         });
         this.canvas.addEventListener("mouseup", evt => {
-            this.input[`mouse_${evt.button}_up`] = 1;
             this.input[`mouse_${evt.button}`] = 0;
+            this.event[`mouse_${evt.button}_up`] = 1;
             this.event_update();
         });
         this.canvas.addEventListener("mousemove", evt => {
             this.input.mouse_x = evt.offsetX;
             this.input.mouse_y = evt.offsetY;
-            this.input.mouse_x_delta = evt.movementX;
-            this.input.mouse_y_delta = evt.movementY;
+            this.event.mouse_x = evt.movementX;
+            this.event.mouse_y = evt.movementY;
             this.event_update();
         });
         this.canvas.addEventListener("wheel", (evt: WheelEvent) => {
-            this.input.wheel_y_delta = evt.deltaY;
+            this.event.wheel_y = evt.deltaY;
             this.event_update();
         });
 
@@ -120,10 +126,8 @@ export class Game extends Array<Array<BaseComponent>> {
         sys_camera(this);
         sys_render(this);
 
-        for (let name in this.input) {
-            if (name.endsWith("_delta") || name.endsWith("_down") || name.endsWith("_up")) {
-                this.input[name] = 0;
-            }
+        for (let name in this.event) {
+            this.event[name] = 0;
         }
     }
 

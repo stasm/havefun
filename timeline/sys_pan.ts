@@ -18,16 +18,16 @@ function update(game: Game, entity: Entity) {
     let pan = game[Get.Pan][entity];
 
     if (game.input.mouse_1) {
-        if (game.input.mouse_x_delta !== 0) {
+        if (game.event.mouse_x !== 0) {
             let current_translation = get_translation([0, 0], transform.world);
             transform.translation = [
-                current_translation[0] - game.input.mouse_x_delta * pan.speed,
+                current_translation[0] - game.event.mouse_x * pan.speed,
                 current_translation[1],
             ];
             transform.dirty = true;
         }
         game.dispatch(Action.PAN_START);
-    } else if (game.input.mouse_1_up) {
+    } else if (game.event.mouse_1_up) {
         game.dispatch(Action.PAN_STOP);
     }
 }
