@@ -2,7 +2,7 @@ import {Get} from "./com_index.js";
 import {RenderRect, render_rect} from "./com_render.js";
 import {Game} from "./game.js";
 
-export function sys_select(game: Game, delta: number) {
+export function sys_select(game: Game) {
     if (game.camera && game.input.mouse_0_down) {
         game.selection = game.add({
             translation: [game.input.mouse_x, game.input.mouse_y],

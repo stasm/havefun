@@ -77,19 +77,23 @@ export class Game extends Array<Array<BaseComponent>> {
         this.canvas.addEventListener("mousedown", evt => {
             this.input[`mouse_${evt.button}_down`] = 1;
             this.input[`mouse_${evt.button}`] = 1;
+            this.event_update();
         });
         this.canvas.addEventListener("mouseup", evt => {
             this.input[`mouse_${evt.button}_up`] = 1;
             this.input[`mouse_${evt.button}`] = 0;
+            this.event_update();
         });
         this.canvas.addEventListener("mousemove", evt => {
             this.input.mouse_x = evt.offsetX;
             this.input.mouse_y = evt.offsetY;
             this.input.mouse_x_delta = evt.movementX;
             this.input.mouse_y_delta = evt.movementY;
+            this.event_update();
         });
         this.canvas.addEventListener("wheel", (evt: WheelEvent) => {
             this.input.wheel_y_delta = evt.deltaY;
+            this.event_update();
         });
 
         this.ctx = this.canvas.getContext("2d")!;
@@ -108,13 +112,23 @@ export class Game extends Array<Array<BaseComponent>> {
         return this.world.length - 1;
     }
 
+    event_update() {
+        sys_zoom(this);
+        sys_pan(this);
+        sys_select(this);
+        sys_transform(this);
+        sys_camera(this);
+        sys_render(this);
+
+        for (let name in this.input) {
+            if (name.endsWith("_delta") || name.endsWith("_down") || name.endsWith("_up")) {
+                this.input[name] = 0;
+            }
+        }
+    }
+
     frame_update(delta: number) {
-        sys_zoom(this, delta);
-        sys_pan(this, delta);
-        sys_select(this, delta);
-        sys_transform(this, delta);
-        sys_camera(this, delta);
-        sys_render(this, delta);
+        this.event_update();
     }
 
     start() {
@@ -122,15 +136,8 @@ export class Game extends Array<Array<BaseComponent>> {
 
         let tick = (now: number) => {
             let delta = (now - last) / 1000;
-            this.frame_update(delta);
-
-            for (let name in this.input) {
-                if (name.endsWith("_delta") || name.endsWith("_down") || name.endsWith("_up")) {
-                    this.input[name] = 0;
-                }
-            }
-
             last = now;
+            this.frame_update(delta);
             this.raf = requestAnimationFrame(tick);
         };
 

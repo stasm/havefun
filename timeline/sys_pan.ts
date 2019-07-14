@@ -5,15 +5,15 @@ import {get_translation} from "./mth_mat2d.js";
 
 const QUERY = Get.Transform | Get.Pan;
 
-export function sys_pan(game: Game, delta: number) {
+export function sys_pan(game: Game) {
     for (let i = 0; i < game.world.length; i++) {
         if ((game.world[i] & QUERY) === QUERY) {
-            update(game, i, delta);
+            update(game, i);
         }
     }
 }
 
-function update(game: Game, entity: Entity, delta: number) {
+function update(game: Game, entity: Entity) {
     let transform = game[Get.Transform][entity];
     let pan = game[Get.Pan][entity];
 
@@ -21,7 +21,7 @@ function update(game: Game, entity: Entity, delta: number) {
         if (game.input.mouse_x_delta !== 0) {
             let current_translation = get_translation([0, 0], transform.world);
             transform.translation = [
-                current_translation[0] - game.input.mouse_x_delta * pan.speed * delta,
+                current_translation[0] - game.input.mouse_x_delta * pan.speed,
                 current_translation[1],
             ];
             transform.dirty = true;

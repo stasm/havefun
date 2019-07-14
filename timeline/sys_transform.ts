@@ -12,7 +12,7 @@ import {
 
 const QUERY = Get.Transform;
 
-export function sys_transform(game: Game, delta: number) {
+export function sys_transform(game: Game) {
     for (let i = 0; i < game.world.length; i++) {
         if ((game.world[i] & QUERY) === QUERY) {
             update(game[Get.Transform][i]);

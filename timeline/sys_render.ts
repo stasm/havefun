@@ -7,7 +7,7 @@ import {create, multiply} from "./mth_mat2d.js";
 
 const QUERY = Get.Transform | Get.Render;
 
-export function sys_render(game: Game, delta: number) {
+export function sys_render(game: Game) {
     if (!game.camera) {
         return;
     }

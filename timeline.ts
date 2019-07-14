@@ -9,7 +9,7 @@ let game = new Game();
 game.add({
     translation: [0, 0],
     scale: [1, 1],
-    using: [camera(), zoom(2), pan(30)],
+    using: [camera(), zoom(1.1), pan(1)],
 });
 
 game.add({
@@ -28,4 +28,4 @@ game.add({
     using: [render_quad("#f00")],
 });
 
-game.start();
+game.event_update();
