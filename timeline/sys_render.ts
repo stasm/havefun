@@ -40,8 +40,7 @@ function draw_quad(game: Game, camera: Camera, transform: Transform, render: Ren
 }
 
 function draw_rect(game: Game, camera: Camera, transform: Transform, render: RenderRect) {
-    let model = multiply(create(), camera.view, transform.world);
-    game.ctx.setTransform(...model);
+    game.ctx.setTransform(...transform.world);
     game.ctx.fillStyle = render.color;
     game.ctx.fillRect(0, 0, render.width, render.height);
 }
