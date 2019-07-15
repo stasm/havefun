@@ -23,5 +23,6 @@ export function sys_select(game: Game) {
 
     if (game.selection && game.event.mouse_0_up) {
         game.destroy(game.selection);
+        game.selection = undefined;
     }
 }
