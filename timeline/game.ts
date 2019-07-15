@@ -1,14 +1,11 @@
 import {Action, effect} from "./actions.js";
-import {Camera} from "./com_camera.js";
 import {BaseComponent, Get} from "./com_index.js";
-import {Overlay} from "./com_overlay.js";
 import {Pan} from "./com_pan.js";
 import {RenderGeneric} from "./com_render.js";
 import {Selectable} from "./com_selectable.js";
 import {Transform, transform} from "./com_transform.js";
 import {Zoom} from "./com_zoom.js";
 import {Rad, Vec2} from "./mth_index.js";
-import {sys_camera} from "./sys_camera.js";
 import {sys_intersect} from "./sys_intersect.js";
 import {sys_pan} from "./sys_pan.js";
 import {sys_render} from "./sys_render.js";
@@ -49,10 +46,8 @@ export class Game extends Array<Array<BaseComponent>> {
     public world: Array<number> = [];
     public [Get.Transform]: Array<Transform> = [];
     public [Get.Render]: Array<RenderGeneric> = [];
-    public [Get.Camera]: Array<Camera> = [];
     public [Get.Zoom]: Array<Zoom> = [];
     public [Get.Pan]: Array<Pan> = [];
-    public [Get.Overlay]: Array<Overlay> = [];
     public [Get.Selectable]: Array<Selectable> = [];
 
     public canvas: HTMLCanvasElement = document.querySelector("canvas")!;
@@ -67,7 +62,6 @@ export class Game extends Array<Array<BaseComponent>> {
         mouse_y: 0,
         wheel_y: 0,
     };
-    public camera?: Camera;
     public selection?: Entity;
 
     private raf: number = 0;
@@ -129,7 +123,6 @@ export class Game extends Array<Array<BaseComponent>> {
         sys_select(this);
         sys_transform(this);
         sys_intersect(this);
-        sys_camera(this);
         sys_render(this);
 
         for (let name in this.event) {

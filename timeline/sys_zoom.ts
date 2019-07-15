@@ -16,14 +16,14 @@ function update(game: Game, entity: Entity) {
     let transform = game[Get.Transform][entity];
     let zoom = game[Get.Zoom][entity];
 
-    if (game.event.wheel_y > 0) {
+    if (game.event.wheel_y < 0) {
         let current_scale = get_scaling([0, 0], transform.world);
         let factor = current_scale[0] * zoom.speed;
         transform.scale = [factor, 1];
         transform.dirty = true;
     }
 
-    if (game.event.wheel_y < 0) {
+    if (game.event.wheel_y > 0) {
         let current_scale = get_scaling([0, 0], transform.world);
         let factor = current_scale[0] / zoom.speed;
         transform.scale = [factor, 1];

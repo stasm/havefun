@@ -1,13 +1,12 @@
 import {Get} from "./com_index.js";
-import {overlay} from "./com_overlay.js";
 import {RenderRect, render_rect} from "./com_render.js";
 import {Game} from "./game.js";
 
 export function sys_select(game: Game) {
-    if (game.camera && game.event.mouse_0_down) {
+    if (game.event.mouse_0_down) {
         game.selection = game.add({
             translation: [game.input.mouse_x, game.input.mouse_y],
-            using: [overlay(), render_rect(1, 1, "rgba(0, 0, 255, 0.1)")],
+            using: [render_rect(1, 1, "rgba(0, 0, 255, 0.1)")],
         });
     }
 

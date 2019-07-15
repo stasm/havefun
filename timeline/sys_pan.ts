@@ -21,7 +21,7 @@ function update(game: Game, entity: Entity) {
         if (game.event.mouse_x !== 0) {
             let current_translation = get_translation([0, 0], transform.world);
             transform.translation = [
-                current_translation[0] - game.event.mouse_x * pan.speed,
+                current_translation[0] + game.event.mouse_x * pan.speed,
                 current_translation[1],
             ];
             transform.dirty = true;

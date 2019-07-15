@@ -3,7 +3,6 @@ import {Entity, Game} from "./game.js";
 
 export interface Selectable extends BaseComponent {
     selected: boolean;
-    aabb?: AABB;
 }
 
 export function selectable() {
@@ -15,5 +14,3 @@ export function selectable() {
         };
     };
 }
-
-export type AABB = [number, number, number, number];
