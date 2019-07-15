@@ -1,8 +1,8 @@
-import {pan} from "./timeline/com_pan.js";
-import {render_rect} from "./timeline/com_render.js";
-import {selectable} from "./timeline/com_selectable.js";
-import {zoom} from "./timeline/com_zoom.js";
-import {Game} from "./timeline/game.js";
+import {pan} from "./com_pan.js";
+import {render_rect} from "./com_render.js";
+import {selectable} from "./com_selectable.js";
+import {zoom} from "./com_zoom.js";
+import {Game} from "./game.js";
 
 export let game = new Game();
 
