@@ -5,7 +5,7 @@ import {selectable} from "./timeline/com_selectable.js";
 import {zoom} from "./timeline/com_zoom.js";
 import {Game} from "./timeline/game.js";
 
-let game = new Game();
+export let game = new Game();
 
 game.add({
     translation: [0, 0],
