@@ -1,7 +1,7 @@
-import {Entity, Game} from "./game.js";
-import {create} from "./mth_mat2d.js";
-import {Rad, Vec2, Mat2D} from "./mth_index.js";
 import {BaseComponent, Get} from "./com_index.js";
+import {Entity, Game} from "./game.js";
+import {Mat2D, Rad, Vec2} from "./mth_index.js";
+import {create} from "./mth_mat2d.js";
 
 export interface Transform extends BaseComponent {
     /** Absolute matrix relative to the world. */
@@ -56,4 +56,9 @@ export function* components_of_type<T>(
     for (let child of transform.children) {
         yield* components_of_type<T>(game, child, mask);
     }
+}
+
+export function anchor(parent: Transform, child: Transform) {
+    child.parent = parent;
+    parent.children.push(child);
 }

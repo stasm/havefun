@@ -3,7 +3,7 @@ import {BaseComponent, Get} from "./com_index.js";
 import {Pan} from "./com_pan.js";
 import {RenderGeneric} from "./com_render.js";
 import {Selectable} from "./com_selectable.js";
-import {Transform, transform} from "./com_transform.js";
+import {anchor, Transform, transform} from "./com_transform.js";
 import {Zoom} from "./com_zoom.js";
 import {Rad, Vec2} from "./mth_index.js";
 import {sys_intersect} from "./sys_intersect.js";
@@ -161,9 +161,7 @@ export class Game extends Array<Array<BaseComponent>> {
         let entity_transform = this[Get.Transform][entity];
         for (let subtree of children) {
             let child = this.add(subtree);
-            let child_transform = this[Get.Transform][child];
-            child_transform.parent = entity_transform;
-            entity_transform.children.push(child_transform);
+            anchor(entity_transform, this[Get.Transform][child]);
         }
         return entity;
     }
