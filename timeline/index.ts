@@ -1,6 +1,6 @@
 import {Get} from "./com_index.js";
 import {pan} from "./com_pan.js";
-import {render_rect} from "./com_render.js";
+import {render_grid, render_rect} from "./com_render.js";
 import {selectable} from "./com_selectable.js";
 import {anchor} from "./com_transform.js";
 import {zoom} from "./com_zoom.js";
@@ -25,6 +25,11 @@ for (let track of tracks) {
         translation: [0, 0],
         scale: [1, 1],
         using: [render_rect(track.notes.length * 10, 160, "#fff")],
+        children: [
+            {
+                using: [render_grid(1, track.notes.length, 10, 160, "#ddd")],
+            },
+        ],
     });
 
     anchor(game[Get.Transform][timeline], game[Get.Transform][track_entity]);
