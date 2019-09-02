@@ -2,8 +2,7 @@ let audio = new AudioContext();
 
 interface Instrument {
     [InstrumentParam.MasterGainAmount]: number;
-    [InstrumentParam.FilterEnabled]: boolean;
-    [InstrumentParam.FilterType]: BiquadFilterType;
+    [InstrumentParam.FilterType]: FilterKind;
     [InstrumentParam.FilterFreq]: number;
     [InstrumentParam.FilterQ]: number;
     [InstrumentParam.LFOEnabled]: boolean;
@@ -12,6 +11,13 @@ interface Instrument {
     [InstrumentParam.LFOFreq]: number;
     [InstrumentParam.FilterDetuneLFO]: boolean;
     [InstrumentParam.Sources]: Array<Source>;
+}
+
+const enum FilterKind {
+    None,
+    LowPass,
+    HighPass,
+    BandPass
 }
 
 type Source = Oscillator | Buffer;
@@ -46,7 +52,6 @@ interface Buffer {
 
 const enum InstrumentParam {
     MasterGainAmount,
-    FilterEnabled,
     FilterType,
     FilterFreq,
     FilterQ,
@@ -95,8 +100,21 @@ function create_instrument(): Instrument {
     let instrument = [];
     instrument[InstrumentParam.MasterGainAmount] = parseInt($gg.value);
 
-    instrument[InstrumentParam.FilterEnabled] = $filter.checked;
-    instrument[InstrumentParam.FilterType] = $type.value as BiquadFilterType;
+    if ($filter.checked) {
+        switch ($type.value as BiquadFilterType) {
+            case "lowpass":
+                instrument[InstrumentParam.FilterType] = FilterKind.LowPass;
+                break;
+            case "highpass":
+                instrument[InstrumentParam.FilterType] = FilterKind.HighPass;
+                break;
+            case "bandpass":
+                instrument[InstrumentParam.FilterType] = FilterKind.BandPass;
+                break;
+        }
+    } else {
+        instrument[InstrumentParam.FilterType] = FilterKind.None;
+    }
     instrument[InstrumentParam.FilterFreq] = parseInt($freq.value);
     instrument[InstrumentParam.FilterQ] = parseInt($q.value);
     instrument[InstrumentParam.FilterDetuneLFO] = $detune.checked;
@@ -184,9 +202,13 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
         lfo.connect(lfa);
     }
 
-    if (instr[InstrumentParam.FilterEnabled]) {
+    if (instr[InstrumentParam.FilterType]) {
         let filter = audio.createBiquadFilter();
-        filter.type = instr[InstrumentParam.FilterType];
+        filter.type = [
+            "lowpass" as BiquadFilterType,
+            "highpass" as BiquadFilterType,
+            "bandpass" as BiquadFilterType
+        ][instr[InstrumentParam.FilterType] - 1];
         filter.frequency.value = 2 ** instr[InstrumentParam.FilterFreq];
         filter.Q.value = instr[InstrumentParam.FilterQ] ** 1.5;
         if (lfa && instr[InstrumentParam.FilterDetuneLFO]) {
