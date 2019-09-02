@@ -2,39 +2,18 @@ let audio = new AudioContext();
 
 interface Instrument {
     [InstrumentParam.MasterGainAmount]: number;
-    [InstrumentParam.FilterType]: FilterKind;
+    [InstrumentParam.FilterType]: false | BiquadFilterType;
     [InstrumentParam.FilterFreq]: number;
     [InstrumentParam.FilterQ]: number;
-    [InstrumentParam.LFOType]: OscillatorKind;
+    [InstrumentParam.LFOType]: false | OscillatorType;
     [InstrumentParam.LFOAmount]: number;
     [InstrumentParam.LFOFreq]: number;
     [InstrumentParam.FilterDetuneLFO]: boolean;
     [InstrumentParam.Sources]: Array<Source>;
 }
 
-const enum FilterKind {
-    None,
-    LowPass,
-    HighPass,
-    BandPass
-}
-
-type Source = Oscillator | Buffer;
-
-const enum OscillatorKind {
-    None,
-    Sine,
-    Square,
-    Sawtooth,
-    Triangle
-}
-
 interface Oscillator {
-    [SourceParam.SourceType]:
-        | OscillatorKind.Sine
-        | OscillatorKind.Square
-        | OscillatorKind.Sawtooth
-        | OscillatorKind.Triangle;
+    [SourceParam.SourceType]: OscillatorType;
     [SourceParam.GainAmount]: number;
     [SourceParam.GainAttack]: number;
     [SourceParam.GainSustain]: number;
@@ -48,7 +27,7 @@ interface Oscillator {
 }
 
 interface Buffer {
-    [SourceParam.SourceType]: OscillatorKind.None;
+    [SourceParam.SourceType]: false;
     [SourceParam.GainAmount]: number;
     [SourceParam.GainAttack]: number;
     [SourceParam.GainSustain]: number;
@@ -104,41 +83,18 @@ function create_instrument(): Instrument {
     instrument[InstrumentParam.MasterGainAmount] = parseInt($gg.value);
 
     if ($filter.checked) {
-        switch ($type.value as BiquadFilterType) {
-            case "lowpass":
-                instrument[InstrumentParam.FilterType] = FilterKind.LowPass;
-                break;
-            case "highpass":
-                instrument[InstrumentParam.FilterType] = FilterKind.HighPass;
-                break;
-            case "bandpass":
-                instrument[InstrumentParam.FilterType] = FilterKind.BandPass;
-                break;
-        }
+        instrument[InstrumentParam.FilterType] = $type.value as BiquadFilterType;
     } else {
-        instrument[InstrumentParam.FilterType] = FilterKind.None;
+        instrument[InstrumentParam.FilterType] = false;
     }
     instrument[InstrumentParam.FilterFreq] = parseInt($freq.value);
     instrument[InstrumentParam.FilterQ] = parseInt($q.value);
     instrument[InstrumentParam.FilterDetuneLFO] = $detune.checked;
 
     if ($lfo.checked) {
-        switch ($lt.value as OscillatorType) {
-            case "sine":
-                instrument[InstrumentParam.LFOType] = OscillatorKind.Sine;
-                break;
-            case "square":
-                instrument[InstrumentParam.LFOType] = OscillatorKind.Square;
-                break;
-            case "sawtooth":
-                instrument[InstrumentParam.LFOType] = OscillatorKind.Sawtooth;
-                break;
-            case "triangle":
-                instrument[InstrumentParam.LFOType] = OscillatorKind.Triangle;
-                break;
-        }
+        instrument[InstrumentParam.LFOType] = $lt.value as OscillatorType;
     } else {
-        instrument[InstrumentParam.LFOType] = OscillatorKind.None;
+        instrument[InstrumentParam.LFOType] = false;
     }
     instrument[InstrumentParam.LFOAmount] = parseInt($lg.value);
     instrument[InstrumentParam.LFOFreq] = parseInt($lf.value);
@@ -147,7 +103,7 @@ function create_instrument(): Instrument {
 
     if (parseInt($ng.value) > 0) {
         let source = [];
-        source[SourceParam.SourceType] = OscillatorKind.None;
+        source[SourceParam.SourceType] = false;
         source[SourceParam.GainAmount] = parseInt($ng.value);
         source[SourceParam.GainAttack] = parseInt($na.value);
         source[SourceParam.GainSustain] = parseInt($ns.value);
@@ -173,20 +129,7 @@ function create_instrument(): Instrument {
 
         if (parseInt($gg.value) > 0) {
             let source = [];
-            switch ($t.value as OscillatorType) {
-                case "sine":
-                    source[SourceParam.SourceType] = OscillatorKind.Sine;
-                    break;
-                case "square":
-                    source[SourceParam.SourceType] = OscillatorKind.Square;
-                    break;
-                case "sawtooth":
-                    source[SourceParam.SourceType] = OscillatorKind.Sawtooth;
-                    break;
-                case "triangle":
-                    source[SourceParam.SourceType] = OscillatorKind.Triangle;
-                    break;
-            }
+            source[SourceParam.SourceType] = $t.value as OscillatorType;
 
             source[SourceParam.GainAmount] = parseInt($gg.value);
             source[SourceParam.GainAttack] = parseInt($ga.value);
@@ -222,12 +165,7 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
     if (instr[InstrumentParam.LFOType]) {
         // Frequency is mapped to [0, 125].
         lfo = audio.createOscillator();
-        lfo.type = [
-            "sine" as OscillatorType,
-            "square" as OscillatorType,
-            "sawtooth" as OscillatorType,
-            "triangle" as OscillatorType,
-        ][instr[InstrumentParam.LFOType] - 1];
+        lfo.type = instr[InstrumentParam.LFOType] as OscillatorType;
         lfo.frequency.value = (instr[InstrumentParam.LFOFreq] / 3) ** 3;
 
         // Amount is mapped to [27, 5832].
@@ -239,11 +177,7 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
 
     if (instr[InstrumentParam.FilterType]) {
         let filter = audio.createBiquadFilter();
-        filter.type = [
-            "lowpass" as BiquadFilterType,
-            "highpass" as BiquadFilterType,
-            "bandpass" as BiquadFilterType
-        ][instr[InstrumentParam.FilterType] - 1];
+        filter.type = instr[InstrumentParam.FilterType] as BiquadFilterType;
         filter.frequency.value = 2 ** instr[InstrumentParam.FilterFreq];
         filter.Q.value = instr[InstrumentParam.FilterQ] ** 1.5;
         if (lfa && instr[InstrumentParam.FilterDetuneLFO]) {
@@ -275,12 +209,7 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
 
         if (source[0]) {
             let hfo = audio.createOscillator();
-            hfo.type = [
-                "sine" as OscillatorType,
-                "square" as OscillatorType,
-                "sawtooth" as OscillatorType,
-                "triangle" as OscillatorType,
-            ][source[SourceParam.SourceType] - 1];
+            hfo.type = source[SourceParam.SourceType];
             hfo.connect(amp);
 
             // Detune
