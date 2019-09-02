@@ -21,11 +21,6 @@ const enum FilterKind {
 
 type Source = Oscillator | Buffer;
 
-const enum SourceKind {
-    Oscillator,
-    Buffer,
-}
-
 const enum OscillatorKind {
     None,
     Sine,
@@ -35,12 +30,15 @@ const enum OscillatorKind {
 }
 
 interface Oscillator {
-    [SourceParam.Kind]: SourceKind.Oscillator;
+    [SourceParam.SourceType]:
+        | OscillatorKind.Sine
+        | OscillatorKind.Square
+        | OscillatorKind.Sawtooth
+        | OscillatorKind.Triangle;
     [SourceParam.GainAmount]: number;
     [SourceParam.GainAttack]: number;
     [SourceParam.GainSustain]: number;
     [SourceParam.GainRelease]: number;
-    [SourceParam.OscillatorType]: OscillatorType;
     [SourceParam.DetuneAmount]: number;
     [SourceParam.DetuneLFO]: boolean;
     [SourceParam.FreqEnabled]: boolean;
@@ -50,7 +48,7 @@ interface Oscillator {
 }
 
 interface Buffer {
-    [SourceParam.Kind]: SourceKind.Buffer;
+    [SourceParam.SourceType]: OscillatorKind.None;
     [SourceParam.GainAmount]: number;
     [SourceParam.GainAttack]: number;
     [SourceParam.GainSustain]: number;
@@ -70,12 +68,11 @@ const enum InstrumentParam {
 }
 
 const enum SourceParam {
-    Kind,
+    SourceType,
     GainAmount,
     GainAttack,
     GainSustain,
     GainRelease,
-    OscillatorType,
     DetuneAmount,
     DetuneLFO,
     FreqEnabled,
@@ -150,7 +147,7 @@ function create_instrument(): Instrument {
 
     if (parseInt($ng.value) > 0) {
         let source = [];
-        source[SourceParam.Kind] = SourceKind.Buffer;
+        source[SourceParam.SourceType] = OscillatorKind.None;
         source[SourceParam.GainAmount] = parseInt($ng.value);
         source[SourceParam.GainAttack] = parseInt($na.value);
         source[SourceParam.GainSustain] = parseInt($ns.value);
@@ -176,14 +173,25 @@ function create_instrument(): Instrument {
 
         if (parseInt($gg.value) > 0) {
             let source = [];
-            source[SourceParam.Kind] = SourceKind.Oscillator;
+            switch ($t.value as OscillatorType) {
+                case "sine":
+                    source[SourceParam.SourceType] = OscillatorKind.Sine;
+                    break;
+                case "square":
+                    source[SourceParam.SourceType] = OscillatorKind.Square;
+                    break;
+                case "sawtooth":
+                    source[SourceParam.SourceType] = OscillatorKind.Sawtooth;
+                    break;
+                case "triangle":
+                    source[SourceParam.SourceType] = OscillatorKind.Triangle;
+                    break;
+            }
 
             source[SourceParam.GainAmount] = parseInt($gg.value);
             source[SourceParam.GainAttack] = parseInt($ga.value);
             source[SourceParam.GainSustain] = parseInt($gs.value);
             source[SourceParam.GainRelease] = parseInt($gr.value);
-
-            source[SourceParam.OscillatorType] = $t.value as OscillatorType;
 
             source[SourceParam.DetuneAmount] = parseInt($da.value);
             source[SourceParam.DetuneLFO] = $dl.checked;
@@ -265,10 +273,14 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
         amp.gain.setValueAtTime(gain_amount, time + gain_attack + gain_sustain);
         amp.gain.exponentialRampToValueAtTime(0.00001, time + gain_duration);
 
-        // XXX TypeScript doesn't recognize source[SourceParam.Kind] as the discriminant.
-        if (source[0] === SourceKind.Oscillator) {
+        if (source[0]) {
             let hfo = audio.createOscillator();
-            hfo.type = source[SourceParam.OscillatorType];
+            hfo.type = [
+                "sine" as OscillatorType,
+                "square" as OscillatorType,
+                "sawtooth" as OscillatorType,
+                "triangle" as OscillatorType,
+            ][source[SourceParam.SourceType] - 1];
             hfo.connect(amp);
 
             // Detune
