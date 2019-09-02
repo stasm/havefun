@@ -9,7 +9,7 @@ interface Instrument {
     [InstrumentParam.LFOAmount]: number;
     [InstrumentParam.LFOFreq]: number;
     [InstrumentParam.FilterDetuneLFO]: boolean;
-    [InstrumentParam.Sources]: Array<Source>;
+    [InstrumentParam.Sources]: Array<Oscillator | Buffer>;
 }
 
 interface Oscillator {
@@ -108,7 +108,9 @@ function create_instrument(): Instrument {
         source[SourceParam.GainAttack] = parseInt($na.value);
         source[SourceParam.GainSustain] = parseInt($ns.value);
         source[SourceParam.GainRelease] = parseInt($nr.value);
-        (instrument[InstrumentParam.Sources] as Array<Source>).push((source as unknown) as Buffer);
+        (instrument[InstrumentParam.Sources] as Array<Oscillator | Buffer>).push(
+            (source as unknown) as Buffer
+        );
     }
 
     for (let i = 1; i < 3; i++) {
@@ -144,7 +146,7 @@ function create_instrument(): Instrument {
             source[SourceParam.FreqSustain] = parseInt($fs.value);
             source[SourceParam.FreqRelease] = parseInt($fr.value);
 
-            (instrument[InstrumentParam.Sources] as Array<Source>).push(
+            (instrument[InstrumentParam.Sources] as Array<Oscillator | Buffer>).push(
                 (source as unknown) as Oscillator
             );
         }
