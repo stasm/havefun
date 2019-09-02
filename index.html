@@ -533,5 +533,8 @@
             </div>
         </div>
     </div>
-    <script src="index.js"></script>
+    <script type="module">
+        import {export_instr} from "./index.js";
+        window.export_instr = export_instr;
+    </script>
 </body>
