@@ -114,7 +114,7 @@ function create_instrument(): Instrument {
     }
 
     for (let i = 1; i < 3; i++) {
-        let $t = $(`input[name="osc1-type"]:checked`)! as HTMLInputElement;
+        let $t = $(`input[name="osc${i}-type"]:checked`)! as HTMLInputElement;
 
         let $gg = $(`#osc${i}-gain-amount`)! as HTMLInputElement;
         let $ga = $(`#osc${i}-gain-attack`)! as HTMLInputElement;
