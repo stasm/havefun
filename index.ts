@@ -5,8 +5,7 @@ interface Instrument {
     [InstrumentParam.FilterType]: FilterKind;
     [InstrumentParam.FilterFreq]: number;
     [InstrumentParam.FilterQ]: number;
-    [InstrumentParam.LFOEnabled]: boolean;
-    [InstrumentParam.LFOType]: OscillatorType;
+    [InstrumentParam.LFOType]: OscillatorKind;
     [InstrumentParam.LFOAmount]: number;
     [InstrumentParam.LFOFreq]: number;
     [InstrumentParam.FilterDetuneLFO]: boolean;
@@ -25,6 +24,14 @@ type Source = Oscillator | Buffer;
 const enum SourceKind {
     Oscillator,
     Buffer,
+}
+
+const enum OscillatorKind {
+    None,
+    Sine,
+    Square,
+    Sawtooth,
+    Triangle
 }
 
 interface Oscillator {
@@ -56,7 +63,6 @@ const enum InstrumentParam {
     FilterFreq,
     FilterQ,
     FilterDetuneLFO,
-    LFOEnabled,
     LFOType,
     LFOAmount,
     LFOFreq,
@@ -119,8 +125,24 @@ function create_instrument(): Instrument {
     instrument[InstrumentParam.FilterQ] = parseInt($q.value);
     instrument[InstrumentParam.FilterDetuneLFO] = $detune.checked;
 
-    instrument[InstrumentParam.LFOEnabled] = $lfo.checked;
-    instrument[InstrumentParam.LFOType] = $lt.value as OscillatorType;
+    if ($lfo.checked) {
+        switch ($lt.value as OscillatorType) {
+            case "sine":
+                instrument[InstrumentParam.LFOType] = OscillatorKind.Sine;
+                break;
+            case "square":
+                instrument[InstrumentParam.LFOType] = OscillatorKind.Square;
+                break;
+            case "sawtooth":
+                instrument[InstrumentParam.LFOType] = OscillatorKind.Sawtooth;
+                break;
+            case "triangle":
+                instrument[InstrumentParam.LFOType] = OscillatorKind.Triangle;
+                break;
+        }
+    } else {
+        instrument[InstrumentParam.LFOType] = OscillatorKind.None;
+    }
     instrument[InstrumentParam.LFOAmount] = parseInt($lg.value);
     instrument[InstrumentParam.LFOFreq] = parseInt($lf.value);
 
@@ -189,10 +211,15 @@ function play_instr(audio: AudioContext, instr: Instrument, note: number, offset
     master.gain.value = (instr[InstrumentParam.MasterGainAmount] / 9) ** 3;
 
     let lfa, lfo;
-    if (instr[InstrumentParam.LFOEnabled]) {
+    if (instr[InstrumentParam.LFOType]) {
         // Frequency is mapped to [0, 125].
         lfo = audio.createOscillator();
-        lfo.type = instr[InstrumentParam.LFOType];
+        lfo.type = [
+            "sine" as OscillatorType,
+            "square" as OscillatorType,
+            "sawtooth" as OscillatorType,
+            "triangle" as OscillatorType,
+        ][instr[InstrumentParam.LFOType] - 1];
         lfo.frequency.value = (instr[InstrumentParam.LFOFreq] / 3) ** 3;
 
         // Amount is mapped to [27, 5832].
