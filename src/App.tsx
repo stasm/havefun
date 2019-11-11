@@ -31,14 +31,32 @@ export function App() {
                 <Master
                     change={evt =>
                         dispatch({
-                            kind: "MASTER_CHANGE",
+                            kind: "CHANGE_MASTER",
                             target: evt.target as HTMLInputElement,
                         })
                     }
                     instr={state}
                 />
-                <Noise />
-                <Oscillator />
+                {state.sources.map((source, index) => {
+                    switch (source.kind) {
+                        case "noise":
+                            return (
+                                <Noise
+                                    key={index}
+                                    change={evt =>
+                                        dispatch({
+                                            kind: "CHANGE_SOURCE",
+                                            target: evt.target as HTMLInputElement,
+                                            index,
+                                        })
+                                    }
+                                    source={source}
+                                />
+                            );
+                        case "oscillator":
+                            return <Oscillator />;
+                    }
+                })}
             </div>
             <div className="row">
                 <Piano />

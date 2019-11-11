@@ -1,5 +1,28 @@
 import {Instrument} from "./player";
 
+export interface OscillatorSource {
+    kind: "oscillator";
+    type: OscillatorType;
+    gain_amount: number;
+    gain_attack: number;
+    gain_sustain: number;
+    gain_release: number;
+    detune_amount: number;
+    detune_lfo: boolean;
+    freq_env: boolean;
+    freq_attack: number;
+    freq_sustain: number;
+    freq_release: number;
+}
+
+export interface NoiseSource {
+    kind: "noise";
+    gain_amount: number;
+    gain_attack: number;
+    gain_sustain: number;
+    gain_release: number;
+}
+
 export interface State {
     instrument?: Instrument;
     gain_amount: number;
@@ -12,6 +35,7 @@ export interface State {
     lfo_type: OscillatorType;
     lfo_amount: number;
     lfo_freq: number;
+    sources: Array<OscillatorSource | NoiseSource>;
 }
 
 export const INITIAL_STATE: State = {
@@ -25,15 +49,24 @@ export const INITIAL_STATE: State = {
     lfo_type: "sine",
     lfo_amount: 8,
     lfo_freq: 8,
+    sources: [
+        {
+            kind: "noise",
+            gain_amount: 8,
+            gain_attack: 8,
+            gain_release: 8,
+            gain_sustain: 8,
+        },
+    ],
 };
 
 export type Action =
-    | {kind: "MASTER_CHANGE"; target: HTMLInputElement}
-    | {kind: "SOURCE_CHANGE"; target: HTMLInputElement; source: number};
+    | {kind: "CHANGE_MASTER"; target: HTMLInputElement}
+    | {kind: "CHANGE_SOURCE"; target: HTMLInputElement; index: number};
 
 export const reducer: React.Reducer<State, Action> = (state, action) => {
     switch (action.kind) {
-        case "MASTER_CHANGE": {
+        case "CHANGE_MASTER": {
             switch (action.target.name) {
                 case "gain-amount":
                     return {
@@ -88,6 +121,38 @@ export const reducer: React.Reducer<State, Action> = (state, action) => {
                 default:
                     return state;
             }
+        }
+        case "CHANGE_SOURCE": {
+            return {
+                ...state,
+                sources: state.sources.map((source, index) => {
+                    if (index === action.index) {
+                        switch (action.target.name) {
+                            case "gain-amount":
+                                return {
+                                    ...source,
+                                    gain_amount: parseInt(action.target.value),
+                                };
+                            case "gain-attack":
+                                return {
+                                    ...source,
+                                    gain_attack: parseInt(action.target.value),
+                                };
+                            case "gain-sustain":
+                                return {
+                                    ...source,
+                                    gain_sustain: parseInt(action.target.value),
+                                };
+                            case "gain-release":
+                                return {
+                                    ...source,
+                                    gain_release: parseInt(action.target.value),
+                                };
+                        }
+                    }
+                    return source;
+                }),
+            };
         }
         default:
             return state;

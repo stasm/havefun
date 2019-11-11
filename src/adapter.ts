@@ -1,4 +1,4 @@
-import {Instrument, InstrumentParam} from "./player";
+import {Buffer, Instrument, InstrumentParam, Oscillator, SourceParam} from "./player";
 import {Action, State} from "./state";
 
 export function with_instrument(reducer: React.Reducer<State, Action>) {
@@ -16,27 +16,41 @@ export function init_instrument(state: State) {
 }
 
 function export_instrument(state: State) {
-    let instrument = [];
-    instrument[InstrumentParam.MasterGainAmount] = state.gain_amount;
+    let instr = [];
+    instr[InstrumentParam.MasterGainAmount] = state.gain_amount;
 
     if (state.filter_enabled) {
-        instrument[InstrumentParam.FilterType] = state.filter_type;
+        instr[InstrumentParam.FilterType] = state.filter_type;
     } else {
-        instrument[InstrumentParam.FilterType] = false;
+        instr[InstrumentParam.FilterType] = false;
     }
-    instrument[InstrumentParam.FilterFreq] = state.filter_freq;
-    instrument[InstrumentParam.FilterQ] = state.filter_q;
-    instrument[InstrumentParam.FilterDetuneLFO] = state.filter_detune_lfo;
+    instr[InstrumentParam.FilterFreq] = state.filter_freq;
+    instr[InstrumentParam.FilterQ] = state.filter_q;
+    instr[InstrumentParam.FilterDetuneLFO] = state.filter_detune_lfo;
 
     if (state.lfo_enabled) {
-        instrument[InstrumentParam.LFOType] = state.lfo_type;
+        instr[InstrumentParam.LFOType] = state.lfo_type;
     } else {
-        instrument[InstrumentParam.LFOType] = false;
+        instr[InstrumentParam.LFOType] = false;
     }
-    instrument[InstrumentParam.LFOAmount] = state.lfo_amount;
-    instrument[InstrumentParam.LFOFreq] = state.lfo_freq;
+    instr[InstrumentParam.LFOAmount] = state.lfo_amount;
+    instr[InstrumentParam.LFOFreq] = state.lfo_freq;
 
-    instrument[InstrumentParam.Sources] = [];
+    instr[InstrumentParam.Sources] = [];
 
-    return (instrument as unknown) as Instrument;
+    for (let source of state.sources) {
+        if (source.gain_amount > 0) {
+            let src = [];
+            src[SourceParam.SourceType] = false;
+            src[SourceParam.GainAmount] = source.gain_amount;
+            src[SourceParam.GainAttack] = source.gain_attack;
+            src[SourceParam.GainSustain] = source.gain_sustain;
+            src[SourceParam.GainRelease] = source.gain_release;
+            (instr[InstrumentParam.Sources] as Array<Oscillator | Buffer>).push(
+                (src as unknown) as Buffer
+            );
+        }
+    }
+
+    return (instr as unknown) as Instrument;
 }

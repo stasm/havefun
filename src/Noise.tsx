@@ -1,6 +1,13 @@
 import * as React from "react";
+import {NoiseSource} from "./state";
 
-export function Noise() {
+export function Noise({
+    source,
+    change,
+}: {
+    source: NoiseSource;
+    change: (evt: React.ChangeEvent) => void;
+}) {
     return (
         <form className="group">
             <h2>Noise</h2>
@@ -11,11 +18,12 @@ export function Noise() {
                         <label className="vertical">
                             <input
                                 type="range"
-                                name="noise-gain-amount"
-                                value="0"
+                                name="gain-amount"
                                 min="0"
                                 max="15"
                                 step="1"
+                                value={source.gain_amount}
+                                onChange={change}
                             />
                             Amnt
                         </label>
@@ -27,30 +35,36 @@ export function Noise() {
                         <label className="vertical">
                             <input
                                 type="range"
-                                name="noise-gain-attack"
+                                name="gain-attack"
                                 min="0"
                                 max="15"
                                 step="1"
+                                value={source.gain_attack}
+                                onChange={change}
                             />
                             Atck
                         </label>
                         <label className="vertical">
                             <input
                                 type="range"
-                                name="noise-gain-sustain"
+                                name="gain-sustain"
                                 min="0"
                                 max="15"
                                 step="1"
+                                value={source.gain_sustain}
+                                onChange={change}
                             />
                             Sust
                         </label>
                         <label className="vertical">
                             <input
                                 type="range"
-                                name="noise-gain-release"
+                                name="gain-release"
                                 min="0"
                                 max="15"
                                 step="1"
+                                value={source.gain_release}
+                                onChange={change}
                             />
                             Rels
                         </label>
