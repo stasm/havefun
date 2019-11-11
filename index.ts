@@ -61,90 +61,58 @@ const enum SourceParam {
 }
 
 function create_instrument(): Instrument {
-    let $gg = $input("master-gain-amount");
-
-    let $filter = $input("master-filter-enabled");
-    let $type = $radio("master-filter-type");
-    let $freq = $input("master-filter-freq");
-    let $q = $input("master-filter-q");
-    let $detune = $input("master-filter-detune-lfo");
-
-    let $lfo = $input("master-lfo-enabled");
-    let $lt = $radio("master-lfo-type");
-    let $lg = $input("master-lfo-amount");
-    let $lf = $input("master-lfo-freq");
-
-    let $ng = $input("noise-gain-amount");
-    let $na = $input("noise-gain-attack");
-    let $ns = $input("noise-gain-sustain");
-    let $nr = $input("noise-gain-release");
-
     let instrument = [];
-    instrument[InstrumentParam.MasterGainAmount] = parseInt($gg.value);
+    instrument[InstrumentParam.MasterGainAmount] = parseInt($input("master-gain-amount").value);
 
-    if ($filter.checked) {
-        instrument[InstrumentParam.FilterType] = $type.value as BiquadFilterType;
+    if ($input("master-filter-enabled").checked) {
+        instrument[InstrumentParam.FilterType] = $radio("master-filter-type")
+            .value as BiquadFilterType;
     } else {
         instrument[InstrumentParam.FilterType] = false;
     }
-    instrument[InstrumentParam.FilterFreq] = parseInt($freq.value);
-    instrument[InstrumentParam.FilterQ] = parseInt($q.value);
-    instrument[InstrumentParam.FilterDetuneLFO] = $detune.checked;
+    instrument[InstrumentParam.FilterFreq] = parseInt($input("master-filter-freq").value);
+    instrument[InstrumentParam.FilterQ] = parseInt($input("master-filter-q").value);
+    instrument[InstrumentParam.FilterDetuneLFO] = $input("master-filter-detune-lfo").checked;
 
-    if ($lfo.checked) {
-        instrument[InstrumentParam.LFOType] = $lt.value as OscillatorType;
+    if ($input("master-lfo-enabled").checked) {
+        instrument[InstrumentParam.LFOType] = $radio("master-lfo-type").value as OscillatorType;
     } else {
         instrument[InstrumentParam.LFOType] = false;
     }
-    instrument[InstrumentParam.LFOAmount] = parseInt($lg.value);
-    instrument[InstrumentParam.LFOFreq] = parseInt($lf.value);
+    instrument[InstrumentParam.LFOAmount] = parseInt($input("master-lfo-amount").value);
+    instrument[InstrumentParam.LFOFreq] = parseInt($input("master-lfo-freq").value);
 
     instrument[InstrumentParam.Sources] = [];
 
-    if (parseInt($ng.value) > 0) {
+    if (parseInt($input("noise-gain-amount").value) > 0) {
         let source = [];
         source[SourceParam.SourceType] = false;
-        source[SourceParam.GainAmount] = parseInt($ng.value);
-        source[SourceParam.GainAttack] = parseInt($na.value);
-        source[SourceParam.GainSustain] = parseInt($ns.value);
-        source[SourceParam.GainRelease] = parseInt($nr.value);
+        source[SourceParam.GainAmount] = parseInt($input("noise-gain-amount").value);
+        source[SourceParam.GainAttack] = parseInt($input("noise-gain-attack").value);
+        source[SourceParam.GainSustain] = parseInt($input("noise-gain-sustain").value);
+        source[SourceParam.GainRelease] = parseInt($input("noise-gain-release").value);
         (instrument[InstrumentParam.Sources] as Array<Oscillator | Buffer>).push(
             (source as unknown) as Buffer
         );
     }
 
     for (let i = 1; i < 3; i++) {
-        let $t = $radio(`osc${i}-type`);
-
-        let $gg = $input(`osc${i}-gain-amount`);
-        let $ga = $input(`osc${i}-gain-attack`);
-        let $gs = $input(`osc${i}-gain-sustain`);
-        let $gr = $input(`osc${i}-gain-release`);
-
-        let $da = $input(`osc${i}-detune-amount`);
-        let $dl = $input(`osc${i}-detune-lfo`);
-
-        let $fe = $input(`osc${i}-freq-env`);
-        let $fa = $input(`osc${i}-freq-attack`);
-        let $fs = $input(`osc${i}-freq-sustain`);
-        let $fr = $input(`osc${i}-freq-release`);
-
-        if (parseInt($gg.value) > 0) {
+        if (parseInt($input(`osc${i}-gain-amount`).value) > 0) {
             let source = [];
-            source[SourceParam.SourceType] = $t.value as OscillatorType;
+            source[SourceParam.SourceType] = $radio(`osc${i}-type`).value as OscillatorType;
 
-            source[SourceParam.GainAmount] = parseInt($gg.value);
-            source[SourceParam.GainAttack] = parseInt($ga.value);
-            source[SourceParam.GainSustain] = parseInt($gs.value);
-            source[SourceParam.GainRelease] = parseInt($gr.value);
+            source[SourceParam.GainAmount] = parseInt($input(`osc${i}-gain-amount`).value);
+            source[SourceParam.GainAttack] = parseInt($input(`osc${i}-gain-attack`).value);
+            source[SourceParam.GainSustain] = parseInt($input(`osc${i}-gain-sustain`).value);
+            source[SourceParam.GainRelease] = parseInt($input(`osc${i}-gain-release`).value);
 
-            source[SourceParam.DetuneAmount] = parseInt($da.value);
-            source[SourceParam.DetuneLFO] = $dl.checked;
+            source[SourceParam.DetuneAmount] = parseInt($input(`osc${i}-detune-amount`).value);
+            source[SourceParam.DetuneLFO] = $input(`osc${i}-detune-lfo`).checked;
 
-            source[SourceParam.FreqEnabled] = $fe.checked;
-            source[SourceParam.FreqAttack] = parseInt($fa.value);
-            source[SourceParam.FreqSustain] = parseInt($fs.value);
-            source[SourceParam.FreqRelease] = parseInt($fr.value);
+            source[SourceParam.FreqEnabled] = $input(`osc${i}-freq-env`).checked;
+            source[SourceParam.FreqAttack] = parseInt($input(`osc${i}-freq-attack`).value);
+            source[SourceParam.FreqSustain] = parseInt($input(`osc${i}-freq-sustain`).value);
+            source[SourceParam.FreqRelease] = parseInt($input(`osc${i}-freq-release`).value);
 
             (instrument[InstrumentParam.Sources] as Array<Oscillator | Buffer>).push(
                 (source as unknown) as Oscillator
