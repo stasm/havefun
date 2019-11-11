@@ -57,6 +57,20 @@ export const INITIAL_STATE: State = {
             gain_release: 8,
             gain_sustain: 8,
         },
+        {
+            kind: "oscillator",
+            type: "sine",
+            gain_amount: 8,
+            gain_attack: 8,
+            gain_sustain: 8,
+            gain_release: 8,
+            detune_amount: 8,
+            detune_lfo: false,
+            freq_env: false,
+            freq_attack: 8,
+            freq_sustain: 8,
+            freq_release: 8,
+        },
     ],
 };
 
@@ -148,6 +162,45 @@ export const reducer: React.Reducer<State, Action> = (state, action) => {
                                     ...source,
                                     gain_release: parseInt(action.target.value),
                                 };
+                        }
+                        if (source.kind === "oscillator") {
+                            switch (action.target.name) {
+                                case "osc-type":
+                                    return {
+                                        ...source,
+                                        type: action.target.value as OscillatorType,
+                                    };
+                                case "detune-amount":
+                                    return {
+                                        ...source,
+                                        detune_amount: parseInt(action.target.value),
+                                    };
+                                case "detune-lfo":
+                                    return {
+                                        ...source,
+                                        detune_lfo: action.target.checked,
+                                    };
+                                case "freq-env":
+                                    return {
+                                        ...source,
+                                        freq_env: action.target.checked,
+                                    };
+                                case "freq-attack":
+                                    return {
+                                        ...source,
+                                        freq_attack: parseInt(action.target.value),
+                                    };
+                                case "freq-sustain":
+                                    return {
+                                        ...source,
+                                        freq_sustain: parseInt(action.target.value),
+                                    };
+                                case "freq-release":
+                                    return {
+                                        ...source,
+                                        freq_release: parseInt(action.target.value),
+                                    };
+                            }
                         }
                     }
                     return source;

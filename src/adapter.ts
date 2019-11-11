@@ -41,14 +41,28 @@ function export_instrument(state: State) {
     for (let source of state.sources) {
         if (source.gain_amount > 0) {
             let src = [];
-            src[SourceParam.SourceType] = false;
             src[SourceParam.GainAmount] = source.gain_amount;
             src[SourceParam.GainAttack] = source.gain_attack;
             src[SourceParam.GainSustain] = source.gain_sustain;
             src[SourceParam.GainRelease] = source.gain_release;
-            (instr[InstrumentParam.Sources] as Array<Oscillator | Buffer>).push(
-                (src as unknown) as Buffer
-            );
+
+            if (source.kind === "noise") {
+                src[SourceParam.SourceType] = false;
+                (instr[InstrumentParam.Sources] as Array<Buffer>).push((src as unknown) as Buffer);
+            }
+
+            if (source.kind === "oscillator") {
+                src[SourceParam.SourceType] = source.type;
+                src[SourceParam.DetuneAmount] = source.detune_amount;
+                src[SourceParam.DetuneLFO] = source.detune_lfo;
+                src[SourceParam.FreqEnabled] = source.freq_env;
+                src[SourceParam.FreqAttack] = source.freq_attack;
+                src[SourceParam.FreqSustain] = source.freq_sustain;
+                src[SourceParam.FreqRelease] = source.freq_release;
+                (instr[InstrumentParam.Sources] as Array<Oscillator>).push(
+                    (src as unknown) as Oscillator
+                );
+            }
         }
     }
 

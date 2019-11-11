@@ -54,7 +54,19 @@ export function App() {
                                 />
                             );
                         case "oscillator":
-                            return <Oscillator />;
+                            return (
+                                <Oscillator
+                                    key={index}
+                                    change={evt =>
+                                        dispatch({
+                                            kind: "CHANGE_SOURCE",
+                                            target: evt.target as HTMLInputElement,
+                                            index,
+                                        })
+                                    }
+                                    source={source}
+                                />
+                            );
                     }
                 })}
             </div>
