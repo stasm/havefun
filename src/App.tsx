@@ -7,6 +7,7 @@ import {Piano} from "./Piano";
 import {INITIAL_STATE, reducer} from "./state";
 
 export function App() {
+    let [audio] = React.useState(new AudioContext());
     let [state, dispatch] = React.useReducer(
         with_instrument(reducer),
         INITIAL_STATE,
@@ -70,9 +71,11 @@ export function App() {
                     }
                 })}
             </div>
-            <div className="row">
-                <Piano />
-            </div>
+            {state.instrument && (
+                <div className="row">
+                    <Piano audio={audio} instr={state.instrument} />
+                </div>
+            )}
         </>
     );
 }
