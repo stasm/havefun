@@ -52,13 +52,6 @@ export const INITIAL_STATE: State = {
     lfo_freq: 8,
     sources: [
         {
-            kind: "noise",
-            gain_amount: 8,
-            gain_attack: 8,
-            gain_release: 8,
-            gain_sustain: 8,
-        },
-        {
             kind: "oscillator",
             type: "sine",
             gain_amount: 8,
@@ -76,12 +69,51 @@ export const INITIAL_STATE: State = {
 };
 
 export type Action =
+    | {kind: "ADD_NOISE"}
+    | {kind: "ADD_OSCILLATOR"}
     | {kind: "CHANGE_MASTER"; target: HTMLInputElement}
     | {kind: "CHANGE_SOURCE"; target: HTMLInputElement; index: number}
     | {kind: "IMPORT_INSTR"; instr: Instrument};
 
 export const reducer: React.Reducer<State, Action> = (state, action) => {
     switch (action.kind) {
+        case "ADD_NOISE": {
+            return {
+                ...state,
+                sources: [
+                    ...state.sources,
+                    {
+                        kind: "noise",
+                        gain_amount: 8,
+                        gain_attack: 8,
+                        gain_release: 8,
+                        gain_sustain: 8,
+                    },
+                ],
+            };
+        }
+        case "ADD_OSCILLATOR": {
+            return {
+                ...state,
+                sources: [
+                    ...state.sources,
+                    {
+                        kind: "oscillator",
+                        type: "sine",
+                        gain_amount: 8,
+                        gain_attack: 8,
+                        gain_sustain: 8,
+                        gain_release: 8,
+                        detune_amount: 8,
+                        detune_lfo: false,
+                        freq_env: false,
+                        freq_attack: 8,
+                        freq_sustain: 8,
+                        freq_release: 8,
+                    },
+                ],
+            };
+        }
         case "CHANGE_MASTER": {
             switch (action.target.name) {
                 case "gain-amount":

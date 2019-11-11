@@ -16,6 +16,14 @@ export function App() {
                 <div className="group">
                     <h2>Options</h2>
                     <div>
+                        <button onClick={() => dispatch({kind: "ADD_OSCILLATOR"})}>
+                            Add oscillator
+                        </button>
+                    </div>
+                    <div>
+                        <button onClick={() => dispatch({kind: "ADD_NOISE"})}>Add noise</button>
+                    </div>
+                    <div>
                         <button onClick={e => console.log(JSON.stringify(state.instrument))}>
                             Export instrument
                         </button>
