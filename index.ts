@@ -250,6 +250,64 @@ export function export_instr() {
     console.log(JSON.stringify(instr));
 }
 
+export function import_instr(instr: Instrument) {
+    for (let form of document.querySelectorAll<HTMLFormElement>("form")) {
+        form.reset();
+        let selector = `input[type="range"][name$="-gain-amount"]`;
+        for (let gain of document.querySelectorAll<HTMLInputElement>(selector)) {
+            gain.value = "0";
+        }
+    }
+
+    set_range("master-gain-amount", instr[InstrumentParam.MasterGainAmount]);
+    let filter_type = instr[InstrumentParam.FilterType];
+    if (filter_type) {
+        set_checkbox("master-filter-enabled", true);
+        set_radio("master-filter-type", filter_type);
+        set_range("master-filter-freq", instr[InstrumentParam.FilterFreq]);
+        set_range("master-filter-q", instr[InstrumentParam.FilterQ]);
+        set_checkbox("master-filter-detune-lfo", instr[InstrumentParam.FilterDetuneLFO]);
+    }
+    let lfo_type = instr[InstrumentParam.LFOType];
+    if (lfo_type) {
+        set_checkbox("master-lfo-enabled", true);
+        set_radio("master-lfo-type", lfo_type);
+        set_range("master-lfo-amount", instr[InstrumentParam.LFOAmount]);
+        set_range("master-lfo-freq", instr[InstrumentParam.LFOFreq]);
+    }
+
+    let i = 0;
+    for (let source of instr[InstrumentParam.Sources]) {
+        if (source_is_osc(source)) {
+            i++;
+
+            set_radio(`osc${i}-type`, source[SourceParam.SourceType]);
+
+            set_range(`osc${i}-gain-amount`, source[SourceParam.GainAmount]);
+            set_range(`osc${i}-gain-attack`, source[SourceParam.GainAttack]);
+            set_range(`osc${i}-gain-sustain`, source[SourceParam.GainSustain]);
+            set_range(`osc${i}-gain-release`, source[SourceParam.GainRelease]);
+
+            set_range(`osc${i}-detune-amount`, source[SourceParam.DetuneAmount]);
+            set_checkbox(`osc${i}-detune-lfo`, source[SourceParam.DetuneLFO]);
+
+            set_checkbox(`osc${i}-freq-env`, source[SourceParam.FreqEnabled]);
+            set_range(`osc${i}-freq-attack`, source[SourceParam.FreqAttack]);
+            set_range(`osc${i}-freq-sustain`, source[SourceParam.FreqSustain]);
+            set_range(`osc${i}-freq-release`, source[SourceParam.FreqRelease]);
+        } else {
+            set_range("noise-gain-amount", source[SourceParam.GainAmount]);
+            set_range("noise-gain-attack", source[SourceParam.GainAttack]);
+            set_range("noise-gain-sustain", source[SourceParam.GainSustain]);
+            set_range("noise-gain-release", source[SourceParam.GainRelease]);
+        }
+    }
+}
+
+function source_is_osc(source: Oscillator | Buffer): source is Oscillator {
+    return source[SourceParam.SourceType] !== false;
+}
+
 async function request_midi() {
     try {
         let midi = await navigator.requestMIDIAccess();
@@ -304,6 +362,29 @@ function $checkbox(name: string) {
     let selector = `input[type="checkbox"][name="${name}"]`;
     let input = document.querySelector(selector) as HTMLInputElement;
     return input.checked;
+}
+
+function set_range(name: string, value = 8) {
+    let selector = `input[type="range"][name="${name}"]`;
+    let input = document.querySelector(selector) as HTMLInputElement;
+    input.value = value.toString();
+}
+
+function set_radio(name: string, value: string) {
+    let selector = `input[type="radio"][name="${name}"]`;
+    for (let option of document.querySelectorAll<HTMLInputElement>(selector)) {
+        if (option.value === value) {
+            option.checked = true;
+        } else {
+            option.checked = false;
+        }
+    }
+}
+
+function set_checkbox(name: string, checked: boolean) {
+    let selector = `input[type="checkbox"][name="${name}"]`;
+    let input = document.querySelector(selector) as HTMLInputElement;
+    input.checked = checked;
 }
 
 let noise_buffer: AudioBuffer;

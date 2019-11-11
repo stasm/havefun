@@ -61,9 +61,12 @@
             <div>
                 <button onclick="export_instr();">Export instrument</button>
             </div>
+            <div>
+                <button onclick="prompt_import();">Import instrument</button>
+            </div>
             <p><em>See console.</em></p>
         </div>
-        <div class="group">
+        <form class="group">
             <h2>Master</h2>
             <div class="row">
                 <div class="group">
@@ -73,7 +76,6 @@
                             <input
                                 type="range"
                                 name="master-gain-amount"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -150,8 +152,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="group">
+        </form>
+        <form class="group">
             <h2>Noise</h2></h2>
             <div class="row">
                 <div class="group">
@@ -177,7 +179,6 @@
                             <input
                                 type="range"
                                 name="noise-gain-attack"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -188,7 +189,6 @@
                             <input
                                 type="range"
                                 name="noise-gain-sustain"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -199,7 +199,6 @@
                             <input
                                 type="range"
                                 name="noise-gain-release"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -209,8 +208,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="group">
+        </form>
+        <form class="group">
             <h2>Oscillator 1</h2>
             <div class="row">
                 <div class="group">
@@ -241,7 +240,6 @@
                             <input
                                 type="range"
                                 name="osc1-gain-amount"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -257,7 +255,6 @@
                             <input
                                 type="range"
                                 name="osc1-gain-attack"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -268,7 +265,6 @@
                             <input
                                 type="range"
                                 name="osc1-gain-sustain"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -279,7 +275,6 @@
                             <input
                                 type="range"
                                 name="osc1-gain-release"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -316,7 +311,6 @@
                             <input
                                 type="range"
                                 name="osc1-freq-attack"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -327,7 +321,6 @@
                             <input
                                 type="range"
                                 name="osc1-freq-sustain"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -338,7 +331,6 @@
                             <input
                                 type="range"
                                 name="osc1-freq-release"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -348,8 +340,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="group">
+        </form>
+        <form class="group">
             <h2>Oscillator 2</h2>
             <div class="row">
                 <div class="group">
@@ -380,7 +372,6 @@
                             <input
                                 type="range"
                                 name="osc2-gain-amount"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -396,7 +387,6 @@
                             <input
                                 type="range"
                                 name="osc2-gain-attack"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -407,7 +397,6 @@
                             <input
                                 type="range"
                                 name="osc2-gain-sustain"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -418,7 +407,6 @@
                             <input
                                 type="range"
                                 name="osc2-gain-release"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -455,7 +443,6 @@
                             <input
                                 type="range"
                                 name="osc2-freq-attack"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -466,7 +453,6 @@
                             <input
                                 type="range"
                                 name="osc2-freq-sustain"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -477,7 +463,6 @@
                             <input
                                 type="range"
                                 name="osc2-freq-release"
-                                value="7"
                                 min="0"
                                 max="15"
                                 step="1"
@@ -487,7 +472,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
     <div class="row">
         <div class="group">
@@ -534,7 +519,13 @@
         </div>
     </div>
     <script type="module">
-        import {export_instr} from "./index.js";
+        import {export_instr, import_instr} from "./index.js";
         window.export_instr = export_instr;
+        window.import_instr = import_instr;
+
+        window.prompt_import = function() {
+            let instr = JSON.parse(prompt("Paste JSON:"))
+            import_instr(instr);
+        }
     </script>
 </body>
