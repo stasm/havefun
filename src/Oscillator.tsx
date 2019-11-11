@@ -4,13 +4,18 @@ import {OscillatorSource} from "./state";
 export function Oscillator({
     source,
     change,
+    remove,
 }: {
     source: OscillatorSource;
     change: (evt: React.ChangeEvent) => void;
+    remove: () => void;
 }) {
     return (
         <form className="group">
-            <h2>Oscillator</h2>
+            <div className="row title">
+                <h2>Oscillator</h2>
+                <small onClick={remove}>×</small>
+            </div>
             <div className="row">
                 <div className="group">
                     <label>Type</label>

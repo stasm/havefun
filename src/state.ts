@@ -71,6 +71,7 @@ export const INITIAL_STATE: State = {
 export type Action =
     | {kind: "ADD_NOISE"}
     | {kind: "ADD_OSCILLATOR"}
+    | {kind: "REMOVE_SOURCE"; index: number}
     | {kind: "CHANGE_MASTER"; target: HTMLInputElement}
     | {kind: "CHANGE_SOURCE"; target: HTMLInputElement; index: number}
     | {kind: "IMPORT_INSTR"; instr: Instrument};
@@ -112,6 +113,12 @@ export const reducer: React.Reducer<State, Action> = (state, action) => {
                         freq_release: 8,
                     },
                 ],
+            };
+        }
+        case "REMOVE_SOURCE": {
+            return {
+                ...state,
+                sources: state.sources.filter((source, index) => index !== action.index),
             };
         }
         case "CHANGE_MASTER": {

@@ -4,13 +4,18 @@ import {NoiseSource} from "./state";
 export function Noise({
     source,
     change,
+    remove,
 }: {
     source: NoiseSource;
     change: (evt: React.ChangeEvent) => void;
+    remove: () => void;
 }) {
     return (
         <form className="group">
-            <h2>Noise</h2>
+            <div className="row title">
+                <h2>Noise</h2>
+                <small onClick={remove}>×</small>
+            </div>
             <div className="row">
                 <div className="group">
                     <label>Gain</label>

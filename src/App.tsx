@@ -64,6 +64,12 @@ export function App() {
                                             index,
                                         })
                                     }
+                                    remove={() =>
+                                        dispatch({
+                                            kind: "REMOVE_SOURCE",
+                                            index,
+                                        })
+                                    }
                                     source={source}
                                 />
                             );
@@ -75,6 +81,12 @@ export function App() {
                                         dispatch({
                                             kind: "CHANGE_SOURCE",
                                             target: evt.target as HTMLInputElement,
+                                            index,
+                                        })
+                                    }
+                                    remove={() =>
+                                        dispatch({
+                                            kind: "REMOVE_SOURCE",
                                             index,
                                         })
                                     }
