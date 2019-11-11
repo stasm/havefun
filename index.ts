@@ -62,15 +62,15 @@ const enum SourceParam {
 
 function create_instrument(): Instrument {
     let instrument = [];
-    instrument[InstrumentParam.MasterGainAmount] = parseInt($range("master-gain-amount"));
+    instrument[InstrumentParam.MasterGainAmount] = $range("master-gain-amount");
 
     if ($checkbox("master-filter-enabled")) {
         instrument[InstrumentParam.FilterType] = $radio("master-filter-type") as BiquadFilterType;
     } else {
         instrument[InstrumentParam.FilterType] = false;
     }
-    instrument[InstrumentParam.FilterFreq] = parseInt($range("master-filter-freq"));
-    instrument[InstrumentParam.FilterQ] = parseInt($range("master-filter-q"));
+    instrument[InstrumentParam.FilterFreq] = $range("master-filter-freq");
+    instrument[InstrumentParam.FilterQ] = $range("master-filter-q");
     instrument[InstrumentParam.FilterDetuneLFO] = $checkbox("master-filter-detune-lfo");
 
     if ($checkbox("master-lfo-enabled")) {
@@ -78,40 +78,40 @@ function create_instrument(): Instrument {
     } else {
         instrument[InstrumentParam.LFOType] = false;
     }
-    instrument[InstrumentParam.LFOAmount] = parseInt($range("master-lfo-amount"));
-    instrument[InstrumentParam.LFOFreq] = parseInt($range("master-lfo-freq"));
+    instrument[InstrumentParam.LFOAmount] = $range("master-lfo-amount");
+    instrument[InstrumentParam.LFOFreq] = $range("master-lfo-freq");
 
     instrument[InstrumentParam.Sources] = [];
 
-    if (parseInt($range("noise-gain-amount")) > 0) {
+    if ($range("noise-gain-amount") > 0) {
         let source = [];
         source[SourceParam.SourceType] = false;
-        source[SourceParam.GainAmount] = parseInt($range("noise-gain-amount"));
-        source[SourceParam.GainAttack] = parseInt($range("noise-gain-attack"));
-        source[SourceParam.GainSustain] = parseInt($range("noise-gain-sustain"));
-        source[SourceParam.GainRelease] = parseInt($range("noise-gain-release"));
+        source[SourceParam.GainAmount] = $range("noise-gain-amount");
+        source[SourceParam.GainAttack] = $range("noise-gain-attack");
+        source[SourceParam.GainSustain] = $range("noise-gain-sustain");
+        source[SourceParam.GainRelease] = $range("noise-gain-release");
         (instrument[InstrumentParam.Sources] as Array<Oscillator | Buffer>).push(
             (source as unknown) as Buffer
         );
     }
 
     for (let i = 1; i < 3; i++) {
-        if (parseInt($range(`osc${i}-gain-amount`)) > 0) {
+        if ($range(`osc${i}-gain-amount`) > 0) {
             let source = [];
             source[SourceParam.SourceType] = $radio(`osc${i}-type`) as OscillatorType;
 
-            source[SourceParam.GainAmount] = parseInt($range(`osc${i}-gain-amount`));
-            source[SourceParam.GainAttack] = parseInt($range(`osc${i}-gain-attack`));
-            source[SourceParam.GainSustain] = parseInt($range(`osc${i}-gain-sustain`));
-            source[SourceParam.GainRelease] = parseInt($range(`osc${i}-gain-release`));
+            source[SourceParam.GainAmount] = $range(`osc${i}-gain-amount`);
+            source[SourceParam.GainAttack] = $range(`osc${i}-gain-attack`);
+            source[SourceParam.GainSustain] = $range(`osc${i}-gain-sustain`);
+            source[SourceParam.GainRelease] = $range(`osc${i}-gain-release`);
 
-            source[SourceParam.DetuneAmount] = parseInt($range(`osc${i}-detune-amount`));
+            source[SourceParam.DetuneAmount] = $range(`osc${i}-detune-amount`);
             source[SourceParam.DetuneLFO] = $checkbox(`osc${i}-detune-lfo`);
 
             source[SourceParam.FreqEnabled] = $checkbox(`osc${i}-freq-env`);
-            source[SourceParam.FreqAttack] = parseInt($range(`osc${i}-freq-attack`));
-            source[SourceParam.FreqSustain] = parseInt($range(`osc${i}-freq-sustain`));
-            source[SourceParam.FreqRelease] = parseInt($range(`osc${i}-freq-release`));
+            source[SourceParam.FreqAttack] = $range(`osc${i}-freq-attack`);
+            source[SourceParam.FreqSustain] = $range(`osc${i}-freq-sustain`);
+            source[SourceParam.FreqRelease] = $range(`osc${i}-freq-release`);
 
             (instrument[InstrumentParam.Sources] as Array<Oscillator | Buffer>).push(
                 (source as unknown) as Oscillator
@@ -289,15 +289,21 @@ function $(selector: string) {
 }
 
 function $range(name: string) {
-    return (document.querySelector(`input[name="${name}"]`) as HTMLInputElement).value;
+    let selector = `input[type="range"][name="${name}"]`;
+    let input = document.querySelector(selector) as HTMLInputElement;
+    return parseInt(input.value);
 }
 
 function $radio(name: string) {
-    return (document.querySelector(`input[name="${name}"]:checked`) as HTMLInputElement).value;
+    let selector = `input[type="radio"][name="${name}"]:checked`;
+    let input = document.querySelector(selector) as HTMLInputElement;
+    return input.value;
 }
 
 function $checkbox(name: string) {
-    return (document.querySelector(`input[name="${name}"]`) as HTMLInputElement).checked;
+    let selector = `input[type="checkbox"][name="${name}"]`;
+    let input = document.querySelector(selector) as HTMLInputElement;
+    return input.checked;
 }
 
 let noise_buffer: AudioBuffer;
