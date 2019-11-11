@@ -1,3 +1,4 @@
+import {import_instr} from "./adapter";
 import {Instrument} from "./player";
 
 export interface OscillatorSource {
@@ -76,7 +77,8 @@ export const INITIAL_STATE: State = {
 
 export type Action =
     | {kind: "CHANGE_MASTER"; target: HTMLInputElement}
-    | {kind: "CHANGE_SOURCE"; target: HTMLInputElement; index: number};
+    | {kind: "CHANGE_SOURCE"; target: HTMLInputElement; index: number}
+    | {kind: "IMPORT_INSTR"; instr: Instrument};
 
 export const reducer: React.Reducer<State, Action> = (state, action) => {
     switch (action.kind) {
@@ -206,6 +208,9 @@ export const reducer: React.Reducer<State, Action> = (state, action) => {
                     return source;
                 }),
             };
+        }
+        case "IMPORT_INSTR": {
+            return import_instr(action.instr);
         }
         default:
             return state;

@@ -1,21 +1,21 @@
 import {Buffer, Instrument, InstrumentParam, Oscillator, SourceParam} from "./player";
 import {Action, State} from "./state";
 
-export function with_instrument(reducer: React.Reducer<State, Action>) {
+export function with_instr(reducer: React.Reducer<State, Action>) {
     return function(state: State, action: Action) {
         let next = reducer(state, action);
-        return init_instrument(next);
+        return init_instr(next);
     };
 }
 
-export function init_instrument(state: State) {
+export function init_instr(state: State) {
     return {
         ...state,
-        instrument: export_instrument(state),
+        instrument: export_instr(state),
     } as State;
 }
 
-function export_instrument(state: State) {
+function export_instr(state: State) {
     let instr = [];
     instr[InstrumentParam.MasterGainAmount] = state.gain_amount;
 
@@ -67,4 +67,53 @@ function export_instrument(state: State) {
     }
 
     return (instr as unknown) as Instrument;
+}
+
+export function import_instr(instr: Instrument) {
+    let state = {
+        gain_amount: instr[InstrumentParam.MasterGainAmount],
+        filter_enabled: instr[InstrumentParam.FilterType] !== false,
+        filter_type: instr[InstrumentParam.FilterType],
+        filter_freq: instr[InstrumentParam.FilterFreq],
+        filter_q: instr[InstrumentParam.FilterQ],
+        filter_detune_lfo: instr[InstrumentParam.FilterDetuneLFO],
+        lfo_enabled: instr[InstrumentParam.LFOType] !== false,
+        lfo_type: instr[InstrumentParam.LFOType],
+        lfo_amount: instr[InstrumentParam.LFOAmount],
+        lfo_freq: instr[InstrumentParam.LFOFreq],
+        sources: [],
+    } as State;
+
+    for (let src of instr[InstrumentParam.Sources]) {
+        if (source_is_osc(src)) {
+            state.sources.push({
+                kind: "oscillator",
+                type: src[SourceParam.SourceType],
+                gain_amount: src[SourceParam.GainAmount],
+                gain_attack: src[SourceParam.GainAttack],
+                gain_sustain: src[SourceParam.GainSustain],
+                gain_release: src[SourceParam.GainRelease],
+                detune_amount: src[SourceParam.DetuneAmount],
+                detune_lfo: src[SourceParam.DetuneLFO],
+                freq_env: src[SourceParam.FreqEnabled],
+                freq_attack: src[SourceParam.FreqAttack],
+                freq_sustain: src[SourceParam.FreqSustain],
+                freq_release: src[SourceParam.FreqRelease],
+            });
+        } else {
+            state.sources.push({
+                kind: "noise",
+                gain_amount: src[SourceParam.GainAmount],
+                gain_attack: src[SourceParam.GainAttack],
+                gain_sustain: src[SourceParam.GainSustain],
+                gain_release: src[SourceParam.GainRelease],
+            });
+        }
+    }
+
+    return state;
+}
+
+function source_is_osc(source: Oscillator | Buffer): source is Oscillator {
+    return source[SourceParam.SourceType] !== false;
 }

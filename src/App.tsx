@@ -1,5 +1,5 @@
 import * as React from "react";
-import {init_instrument, with_instrument} from "./adapter";
+import {init_instr, with_instr} from "./adapter";
 import {Master} from "./Master";
 import {Noise} from "./Noise";
 import {Oscillator} from "./Oscillator";
@@ -8,11 +8,7 @@ import {INITIAL_STATE, reducer} from "./state";
 
 export function App() {
     let [audio] = React.useState(new AudioContext());
-    let [state, dispatch] = React.useReducer(
-        with_instrument(reducer),
-        INITIAL_STATE,
-        init_instrument
-    );
+    let [state, dispatch] = React.useReducer(with_instr(reducer), INITIAL_STATE, init_instr);
     return (
         <>
             <h1>Have Fun Audio Editor</h1>
@@ -20,10 +16,19 @@ export function App() {
                 <div className="group">
                     <h2>Options</h2>
                     <div>
-                        <button onClick={e => console.log(state)}>Export instrument</button>
+                        <button onClick={e => console.log(JSON.stringify(state.instrument))}>
+                            Export instrument
+                        </button>
                     </div>
                     <div>
-                        <button>Import instrument</button>
+                        <button
+                            onClick={() => {
+                                let instr = JSON.parse(prompt("Pase JSON:")!);
+                                dispatch({kind: "IMPORT_INSTR", instr});
+                            }}
+                        >
+                            Import instrument
+                        </button>
                     </div>
                     <p>
                         <em>See console.</em>
