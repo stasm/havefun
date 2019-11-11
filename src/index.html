@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<title>Have Fun Audio Editor</title>
+<style>
+    body {
+        background: #eee;
+    }
+
+    h2 {
+        margin-top: 0;
+    }
+
+    .group {
+        background: #eee;
+        border: 2px groove #fff;
+        padding: 5px;
+    }
+
+    .row {
+        display: flex;
+        flex-flow: row wrap;
+    }
+
+    label.horizontal {
+        display: block;
+    }
+
+    label.vertical {
+        display: block;
+        text-align: center;
+    }
+
+    label.vertical input {
+        display: block;
+        margin: 35px -25px;
+        transform: rotate(-90deg);
+        width: 100px;
+        height: 50px;
+    }
+
+    .key.white {
+        background: #fff;
+        width: 30px;
+        height: 90px;
+    }
+    .key.black {
+        background: #222;
+        width: 30px;
+        height: 60px;
+        margin: -10px -15px;
+        z-index: 2;
+    }
+    .key.pressed {
+        border-style: inset;
+    }
+</style>
+<body>
+    <div id="root"></div>
+    <script src="index.tsx"></script>
+</body>
