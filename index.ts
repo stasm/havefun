@@ -61,23 +61,23 @@ const enum SourceParam {
 }
 
 function create_instrument(): Instrument {
-    let $gg = $(`#master-gain-amount`)! as HTMLInputElement;
+    let $gg = $input("master-gain-amount");
 
-    let $filter = $(`#master-filter-enabled`)! as HTMLInputElement;
-    let $type = $(`input[name="master-filter-type"]:checked`)! as HTMLInputElement;
-    let $freq = $(`#master-filter-freq`)! as HTMLInputElement;
-    let $q = $(`#master-filter-q`)! as HTMLInputElement;
-    let $detune = $(`input[name="master-filter-detune-lfo"]`)! as HTMLInputElement;
+    let $filter = $input("master-filter-enabled");
+    let $type = $radio("master-filter-type");
+    let $freq = $input("master-filter-freq");
+    let $q = $input("master-filter-q");
+    let $detune = $input("master-filter-detune-lfo");
 
-    let $lfo = $('input[name="master-lfo-enabled"]')! as HTMLInputElement;
-    let $lt = $('input[name="master-lfo-type"]:checked')! as HTMLInputElement;
-    let $lg = $('input[name="master-lfo-amount"]')! as HTMLInputElement;
-    let $lf = $('input[name="master-lfo-freq"]')! as HTMLInputElement;
+    let $lfo = $input("master-lfo-enabled");
+    let $lt = $radio("master-lfo-type");
+    let $lg = $input("master-lfo-amount");
+    let $lf = $input("master-lfo-freq");
 
-    let $ng = $('input[name="noise-gain-amount"]')! as HTMLInputElement;
-    let $na = $('input[name="noise-gain-attack"]')! as HTMLInputElement;
-    let $ns = $('input[name="noise-gain-sustain"]')! as HTMLInputElement;
-    let $nr = $('input[name="noise-gain-release"]')! as HTMLInputElement;
+    let $ng = $input("noise-gain-amount");
+    let $na = $input("noise-gain-attack");
+    let $ns = $input("noise-gain-sustain");
+    let $nr = $input("noise-gain-release");
 
     let instrument = [];
     instrument[InstrumentParam.MasterGainAmount] = parseInt($gg.value);
@@ -114,20 +114,20 @@ function create_instrument(): Instrument {
     }
 
     for (let i = 1; i < 3; i++) {
-        let $t = $(`input[name="osc${i}-type"]:checked`)! as HTMLInputElement;
+        let $t = $radio(`osc${i}-type`);
 
-        let $gg = $(`#osc${i}-gain-amount`)! as HTMLInputElement;
-        let $ga = $(`#osc${i}-gain-attack`)! as HTMLInputElement;
-        let $gs = $(`#osc${i}-gain-sustain`)! as HTMLInputElement;
-        let $gr = $(`#osc${i}-gain-release`)! as HTMLInputElement;
+        let $gg = $input(`osc${i}-gain-amount`);
+        let $ga = $input(`osc${i}-gain-attack`);
+        let $gs = $input(`osc${i}-gain-sustain`);
+        let $gr = $input(`osc${i}-gain-release`);
 
-        let $da = $(`input[name="osc${i}-detune-amount"]`)! as HTMLInputElement;
-        let $dl = $(`input[name="osc${i}-detune-lfo"]`)! as HTMLInputElement;
+        let $da = $input(`osc${i}-detune-amount`);
+        let $dl = $input(`osc${i}-detune-lfo`);
 
-        let $fe = $(`#osc${i}-freq-env`)! as HTMLInputElement;
-        let $fa = $(`#osc${i}-freq-attack`)! as HTMLInputElement;
-        let $fs = $(`#osc${i}-freq-sustain`)! as HTMLInputElement;
-        let $fr = $(`#osc${i}-freq-release`)! as HTMLInputElement;
+        let $fe = $input(`osc${i}-freq-env`);
+        let $fa = $input(`osc${i}-freq-attack`);
+        let $fs = $input(`osc${i}-freq-sustain`);
+        let $fr = $input(`osc${i}-freq-release`);
 
         if (parseInt($gg.value) > 0) {
             let source = [];
@@ -319,6 +319,14 @@ function on_midi_message(message: WebMidi.MIDIMessageEvent) {
 
 function $(selector: string) {
     return document.querySelector(selector);
+}
+
+function $input(name: string) {
+    return document.querySelector(`input[name="${name}"]`) as HTMLInputElement;
+}
+
+function $radio(name: string) {
+    return document.querySelector(`input[name="${name}"]:checked`) as HTMLInputElement;
 }
 
 let noise_buffer: AudioBuffer;
