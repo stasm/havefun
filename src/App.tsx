@@ -8,27 +8,38 @@ import {INITIAL_STATE, reducer} from "./state";
 
 export function App() {
     let [state, dispatch] = React.useReducer(with_instr(reducer), INITIAL_STATE, init_instr);
+
     return (
         <>
             <h1>Have Fun Audio Editor</h1>
             <div className="row">
                 <div className="group">
-                    <h2>Options</h2>
+                    <h2>Commands</h2>
                     <div>
-                        <button onClick={() => dispatch({kind: "ADD_OSCILLATOR"})}>
+                        <button
+                            className="command"
+                            onClick={() => dispatch({kind: "ADD_OSCILLATOR"})}
+                        >
                             Add oscillator
                         </button>
                     </div>
                     <div>
-                        <button onClick={() => dispatch({kind: "ADD_NOISE"})}>Add noise</button>
+                        <button className="command" onClick={() => dispatch({kind: "ADD_NOISE"})}>
+                            Add noise
+                        </button>
                     </div>
+                    <hr />
                     <div>
-                        <button onClick={e => alert(JSON.stringify(state.instrument))}>
+                        <button
+                            className="command"
+                            onClick={e => alert(JSON.stringify(state.instrument))}
+                        >
                             Export instrument
                         </button>
                     </div>
                     <div>
                         <button
+                            className="command"
                             onClick={() => {
                                 let instr = JSON.parse(prompt("Pase JSON:")!);
                                 dispatch({kind: "IMPORT_INSTR", instr});
