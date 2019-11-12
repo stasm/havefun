@@ -15,12 +15,16 @@ function on_midi_message(play_note: (note: number) => void, message: WebMidi.MID
         case 240:
             break;
         case 144: {
-            let button = document.querySelector(`button.key[data-note="${note}"]`);
+            let buttons = document.querySelectorAll(`button.key[data-note="${note}"]`);
             if (velocity > 0) {
                 play_note(note);
-                button && button.classList.add("pressed");
+                for (let button of buttons) {
+                    button.classList.add("pressed");
+                }
             } else {
-                button && button.classList.remove("pressed");
+                for (let button of buttons) {
+                    button.classList.remove("pressed");
+                }
             }
         }
         default:
