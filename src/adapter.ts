@@ -15,7 +15,7 @@ export function init_instr(state: State) {
     } as State;
 }
 
-function export_instr(state: State) {
+export function export_instr(state: State) {
     let instr = [];
     instr[InstrumentParam.MasterGainAmount] = state.gain_amount;
 

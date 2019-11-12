@@ -23,7 +23,7 @@ export function App() {
                         <button onClick={() => dispatch({kind: "ADD_NOISE"})}>Add noise</button>
                     </div>
                     <div>
-                        <button onClick={e => console.log(JSON.stringify(state.instrument))}>
+                        <button onClick={e => alert(JSON.stringify(state.instrument))}>
                             Export instrument
                         </button>
                     </div>
@@ -37,9 +37,6 @@ export function App() {
                             Import instrument
                         </button>
                     </div>
-                    <p>
-                        <em>See console.</em>
-                    </p>
                 </div>
                 <Master
                     change={evt =>
