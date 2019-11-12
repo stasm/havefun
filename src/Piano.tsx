@@ -1,14 +1,23 @@
 import * as React from "react";
+import {request_midi} from "./midi";
 import {Instrument, play_instr} from "./player";
 
-export function Piano({audio, instr}: {audio: AudioContext; instr: Instrument}) {
+export function Piano({instr}: {instr: Instrument}) {
+    let [audio] = React.useState(new AudioContext());
+    React.useEffect(() => {
+        if (navigator.requestMIDIAccess) {
+            request_midi(audio, instr);
+        }
+    }, []);
+
     function play(evt: React.MouseEvent) {
         let note = evt.currentTarget.getAttribute("data-note")!;
         play_instr(audio, instr, parseInt(note), 0);
     }
+
     return (
         <div className="group">
-            <h2>Frequency</h2>
+            <h2>Piano</h2>
             <div className="row">
                 <button className="key white" onClick={play} data-note="48"></button>
                 <button className="key black" onClick={play} data-note="49"></button>
