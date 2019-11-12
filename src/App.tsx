@@ -8,7 +8,7 @@ export function App() {
 
     function add_instrument() {
         set_instruments(instruments => [...instruments, next_id]);
-        set_next_id(id => id++);
+        set_next_id(id => id + 1);
     }
 
     function remove_instrument(id: number) {
