@@ -7,9 +7,11 @@ import {Piano} from "./Piano";
 import {INITIAL_STATE, reducer} from "./state";
 
 export function Instrument({
+    audio,
     add_instrument,
     remove_self,
 }: {
+    audio: AudioContext;
     add_instrument: () => void;
     remove_self: () => void;
 }) {
@@ -121,7 +123,7 @@ export function Instrument({
             </div>
             {state.instrument && (
                 <div className="row">
-                    <Piano instr={state.instrument} />
+                    <Piano audio={audio} instr={state.instrument} />
                 </div>
             )}
         </>

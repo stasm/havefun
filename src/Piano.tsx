@@ -4,8 +4,7 @@ import {Instrument, play_instr} from "./player";
 
 type InputMode = "None" | "MIDI" | "ArrowUp" | "ArrowRight" | "ArrowDown" | "ArrowLeft";
 
-export function Piano({instr}: {instr: Instrument}) {
-    let [audio] = React.useState(new AudioContext());
+export function Piano({audio, instr}: {audio: AudioContext; instr: Instrument}) {
     let [input_mode, set_input_mode] = React.useState<InputMode>("None");
 
     let ref = React.useRef({instr, input_mode});
