@@ -6,8 +6,26 @@ type InputMode = "None" | "MIDI" | "ArrowUp" | "ArrowRight" | "ArrowDown" | "Arr
 
 export function Piano({instr}: {instr: Instrument}) {
     let [audio] = React.useState(new AudioContext());
-    let instr_ref = React.useRef(instr);
-    instr_ref.current = instr;
+    let [input_mode, set_input_mode] = React.useState<InputMode>("None");
+
+    let ref = React.useRef({instr, input_mode});
+    ref.current = {instr, input_mode};
+
+    React.useEffect(() => {
+        window.addEventListener("keydown", play_key);
+        return () => {
+            window.removeEventListener("keydown", play_key);
+        };
+    }, []);
+
+    function play_key(evt: KeyboardEvent) {
+        if (evt.key.startsWith("Arrow")) {
+            evt.preventDefault();
+        }
+        if (evt.key === ref.current.input_mode) {
+            play_instr(audio, ref.current.instr, 69, 0);
+        }
+    }
 
     React.useEffect(() => {
         if (navigator.requestMIDIAccess) {
@@ -15,24 +33,10 @@ export function Piano({instr}: {instr: Instrument}) {
         }
     }, []);
 
-    let [input_mode, set_input_mode] = React.useState<InputMode>("None");
-
-    React.useEffect(() => {
-        window.addEventListener("keydown", play_key);
-        return () => {
-            window.removeEventListener("keydown", play_key);
-        };
-    }, [input_mode]);
-
-    function play_key(evt: KeyboardEvent) {
-        evt.preventDefault();
-        if (evt.key === input_mode) {
-            play_instr(audio, instr_ref.current, 69, 0);
-        }
-    }
-
     function play_note(note: number) {
-        play_instr(audio, instr_ref.current, note, 0);
+        if (ref.current.input_mode === "MIDI") {
+            play_instr(audio, ref.current.instr, note, 0);
+        }
     }
 
     function play_button(evt: React.MouseEvent) {
