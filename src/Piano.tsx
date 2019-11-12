@@ -22,7 +22,7 @@ export function Piano({audio, instr}: {audio: AudioContext; instr: Instrument}) 
             evt.preventDefault();
         }
         if (evt.key === ref.current.input_mode) {
-            play_instr(audio, ref.current.instr, 69, 0);
+            play_instr(audio, ref.current.instr, 45, 0);
         }
     }
 
