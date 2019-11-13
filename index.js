@@ -1,227 +1,392 @@
-let audio = new AudioContext();
-function create_instrument() {
-    let $gg = $(`#master-gain-amount`);
-    let $filter = $(`#master-filter-enabled`);
-    let $type = $(`input[name="master-filter-type"]:checked`);
-    let $freq = $(`#master-filter-freq`);
-    let $q = $(`#master-filter-q`);
-    let $detune = $(`input[name="master-filter-detune-lfo"]`);
-    let $lfo = $('input[name="master-lfo-enabled"]');
-    let $lt = $('input[name="master-lfo-type"]:checked');
-    let $lg = $('input[name="master-lfo-amount"]');
-    let $lf = $('input[name="master-lfo-freq"]');
-    let $ng = $('input[name="noise-gain-amount"]');
-    let $na = $('input[name="noise-gain-attack"]');
-    let $ns = $('input[name="noise-gain-sustain"]');
-    let $nr = $('input[name="noise-gain-release"]');
-    let instrument = [];
-    instrument[0 /* MasterGainAmount */] = parseInt($gg.value);
-    if ($filter.checked) {
-        instrument[1 /* FilterType */] = $type.value;
-    }
-    else {
-        instrument[1 /* FilterType */] = false;
-    }
-    instrument[2 /* FilterFreq */] = parseInt($freq.value);
-    instrument[3 /* FilterQ */] = parseInt($q.value);
-    instrument[4 /* FilterDetuneLFO */] = $detune.checked;
-    if ($lfo.checked) {
-        instrument[5 /* LFOType */] = $lt.value;
-    }
-    else {
-        instrument[5 /* LFOType */] = false;
-    }
-    instrument[6 /* LFOAmount */] = parseInt($lg.value);
-    instrument[7 /* LFOFreq */] = parseInt($lf.value);
-    instrument[8 /* Sources */] = [];
-    if (parseInt($ng.value) > 0) {
-        let source = [];
-        source[0 /* SourceType */] = false;
-        source[1 /* GainAmount */] = parseInt($ng.value);
-        source[2 /* GainAttack */] = parseInt($na.value);
-        source[3 /* GainSustain */] = parseInt($ns.value);
-        source[4 /* GainRelease */] = parseInt($nr.value);
-        instrument[8 /* Sources */].push(source);
-    }
-    for (let i = 1; i < 3; i++) {
-        let $t = $(`input[name="osc${i}-type"]:checked`);
-        let $gg = $(`#osc${i}-gain-amount`);
-        let $ga = $(`#osc${i}-gain-attack`);
-        let $gs = $(`#osc${i}-gain-sustain`);
-        let $gr = $(`#osc${i}-gain-release`);
-        let $da = $(`input[name="osc${i}-detune-amount"]`);
-        let $dl = $(`input[name="osc${i}-detune-lfo"]`);
-        let $fe = $(`#osc${i}-freq-env`);
-        let $fa = $(`#osc${i}-freq-attack`);
-        let $fs = $(`#osc${i}-freq-sustain`);
-        let $fr = $(`#osc${i}-freq-release`);
-        if (parseInt($gg.value) > 0) {
-            let source = [];
-            source[0 /* SourceType */] = $t.value;
-            source[1 /* GainAmount */] = parseInt($gg.value);
-            source[2 /* GainAttack */] = parseInt($ga.value);
-            source[3 /* GainSustain */] = parseInt($gs.value);
-            source[4 /* GainRelease */] = parseInt($gr.value);
-            source[5 /* DetuneAmount */] = parseInt($da.value);
-            source[6 /* DetuneLFO */] = $dl.checked;
-            source[7 /* FreqEnabled */] = $fe.checked;
-            source[8 /* FreqAttack */] = parseInt($fa.value);
-            source[9 /* FreqSustain */] = parseInt($fs.value);
-            source[10 /* FreqRelease */] = parseInt($fr.value);
-            instrument[8 /* Sources */].push(source);
+// modules are defined as an array
+// [ module function, map of requires ]
+//
+// map of requires is short require name -> numeric require
+//
+// anything defined in a previous bundle is accessed via the
+// orig method which is the require for previous bundles
+parcelRequire = (function (modules, cache, entry, globalName) {
+  // Save the require from previous bundle to this closure if any
+  var previousRequire = typeof parcelRequire === 'function' && parcelRequire;
+  var nodeRequire = typeof require === 'function' && require;
+
+  function newRequire(name, jumped) {
+    if (!cache[name]) {
+      if (!modules[name]) {
+        // if we cannot find the module within our internal map or
+        // cache jump to the current global require ie. the last bundle
+        // that was added to the page.
+        var currentRequire = typeof parcelRequire === 'function' && parcelRequire;
+        if (!jumped && currentRequire) {
+          return currentRequire(name, true);
         }
-    }
-    // Meh, not ideal.
-    return instrument;
-}
-function play_instr(audio, instr, note, offset) {
-    let time = audio.currentTime + offset;
-    let total_duration = 0;
-    let master = audio.createGain();
-    master.gain.value = (instr[0 /* MasterGainAmount */] / 9) ** 3;
-    let lfa, lfo;
-    if (instr[5 /* LFOType */]) {
-        // Frequency is mapped to [0, 125].
-        lfo = audio.createOscillator();
-        lfo.type = instr[5 /* LFOType */];
-        lfo.frequency.value = (instr[7 /* LFOFreq */] / 3) ** 3;
-        // Amount is mapped to [27, 5832].
-        lfa = audio.createGain();
-        lfa.gain.value = (instr[6 /* LFOAmount */] + 3) ** 3;
-        lfo.connect(lfa);
-    }
-    if (instr[1 /* FilterType */]) {
-        let filter = audio.createBiquadFilter();
-        filter.type = instr[1 /* FilterType */];
-        filter.frequency.value = 2 ** instr[2 /* FilterFreq */];
-        filter.Q.value = instr[3 /* FilterQ */] ** 1.5;
-        if (lfa && instr[4 /* FilterDetuneLFO */]) {
-            lfa.connect(filter.detune);
+
+        // If there are other bundles on this page the require from the
+        // previous one is saved to 'previousRequire'. Repeat this as
+        // many times as there are bundles until the module is found or
+        // we exhaust the require chain.
+        if (previousRequire) {
+          return previousRequire(name, true);
         }
-        master.connect(filter);
-        filter.connect(audio.destination);
-    }
-    else {
-        master.connect(audio.destination);
-    }
-    for (let source of instr[8 /* Sources */]) {
-        let amp = audio.createGain();
-        amp.connect(master);
-        // Gain Envelope
-        let gain_amount = (source[1 /* GainAmount */] / 9) ** 3;
-        let gain_attack = (source[2 /* GainAttack */] / 9) ** 3;
-        let gain_sustain = (source[3 /* GainSustain */] / 9) ** 3;
-        let gain_release = (source[4 /* GainRelease */] / 6) ** 3;
-        let gain_duration = gain_attack + gain_sustain + gain_release;
-        amp.gain.setValueAtTime(0, time);
-        amp.gain.linearRampToValueAtTime(gain_amount, time + gain_attack);
-        amp.gain.setValueAtTime(gain_amount, time + gain_attack + gain_sustain);
-        amp.gain.exponentialRampToValueAtTime(0.00001, time + gain_duration);
-        if (source[0]) {
-            let hfo = audio.createOscillator();
-            hfo.type = source[0 /* SourceType */];
-            hfo.connect(amp);
-            // Detune
-            // [-1265,1265] i.e. one octave down and one octave up.
-            hfo.detune.value = 3 * (source[5 /* DetuneAmount */] - 7.5) ** 3;
-            if (lfa && source[6 /* DetuneLFO */]) {
-                lfa.connect(hfo.detune);
-            }
-            // Frequency Envelope
-            // Frequency from note number
-            let freq = 440 * 2 ** ((note - 69) / 12);
-            let freq_attack = (source[8 /* FreqAttack */] / 9) ** 3;
-            let freq_sustain = (source[9 /* FreqSustain */] / 9) ** 3;
-            let freq_release = (source[10 /* FreqRelease */] / 6) ** 3;
-            if (source[7 /* FreqEnabled */]) {
-                hfo.frequency.setValueAtTime(0, time);
-                hfo.frequency.linearRampToValueAtTime(freq, time + freq_attack);
-                hfo.frequency.setValueAtTime(freq, time + freq_attack + freq_sustain);
-                hfo.frequency.exponentialRampToValueAtTime(0.00001, time + freq_attack + freq_sustain + freq_release);
-            }
-            else {
-                hfo.frequency.setValueAtTime(freq, time);
-            }
-            hfo.start(time);
-            hfo.stop(time + gain_duration);
+
+        // Try the node require function if it exists.
+        if (nodeRequire && typeof name === 'string') {
+          return nodeRequire(name);
         }
-        else {
-            let noise = audio.createBufferSource();
-            noise.buffer = lazy_noise_buffer(audio);
-            noise.loop = true;
-            noise.connect(amp);
-            noise.start(time);
-            noise.stop(time + gain_duration);
-        }
-        if (gain_duration > total_duration) {
-            total_duration = gain_duration;
-        }
+
+        var err = new Error('Cannot find module \'' + name + '\'');
+        err.code = 'MODULE_NOT_FOUND';
+        throw err;
+      }
+
+      localRequire.resolve = resolve;
+      localRequire.cache = {};
+
+      var module = cache[name] = new newRequire.Module(name);
+
+      modules[name][0].call(module.exports, localRequire, module, module.exports, this);
     }
-    if (lfo) {
-        lfo.start(time);
-        lfo.stop(time + total_duration);
+
+    return cache[name].exports;
+
+    function localRequire(x){
+      return newRequire(localRequire.resolve(x));
     }
-}
-function play_note(note) {
-    let instr = create_instrument();
-    play_instr(audio, instr, note, 0);
-}
-function play_key(evt) {
-    let note = evt.currentTarget.getAttribute("data-note");
-    play_note(parseInt(note));
-}
-for (let key of document.querySelectorAll(".key")) {
-    key.addEventListener("click", play_key);
-}
-export function export_instr() {
-    let instr = create_instrument();
-    console.log(JSON.stringify(instr));
-}
-async function request_midi() {
+
+    function resolve(x){
+      return modules[name][1][x] || x;
+    }
+  }
+
+  function Module(moduleName) {
+    this.id = moduleName;
+    this.bundle = newRequire;
+    this.exports = {};
+  }
+
+  newRequire.isParcelRequire = true;
+  newRequire.Module = Module;
+  newRequire.modules = modules;
+  newRequire.cache = cache;
+  newRequire.parent = previousRequire;
+  newRequire.register = function (id, exports) {
+    modules[id] = [function (require, module) {
+      module.exports = exports;
+    }, {}];
+  };
+
+  var error;
+  for (var i = 0; i < entry.length; i++) {
     try {
-        let midi = await navigator.requestMIDIAccess();
-        for (let input of midi.inputs.values()) {
-            input.onmidimessage = on_midi_message;
+      newRequire(entry[i]);
+    } catch (e) {
+      // Save first error but execute all entries
+      if (!error) {
+        error = e;
+      }
+    }
+  }
+
+  if (entry.length) {
+    // Expose entry point to Node, AMD or browser globals
+    // Based on https://github.com/ForbesLindesay/umd/blob/master/template.js
+    var mainExports = newRequire(entry[entry.length - 1]);
+
+    // CommonJS
+    if (typeof exports === "object" && typeof module !== "undefined") {
+      module.exports = mainExports;
+
+    // RequireJS
+    } else if (typeof define === "function" && define.amd) {
+     define(function () {
+       return mainExports;
+     });
+
+    // <script>
+    } else if (globalName) {
+      this[globalName] = mainExports;
+    }
+  }
+
+  // Override the current require with this new one
+  parcelRequire = newRequire;
+
+  if (error) {
+    // throw error from earlier, _after updating parcelRequire_
+    throw error;
+  }
+
+  return newRequire;
+})({"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+var bundleURL = null;
+
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
+  }
+
+  return bundleURL;
+}
+
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error();
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
+
+    if (matches) {
+      return getBaseURL(matches[0]);
+    }
+  }
+
+  return '/';
+}
+
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
+}
+
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+},{}],"../node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
+
+function updateLink(link) {
+  var newLink = link.cloneNode();
+
+  newLink.onload = function () {
+    link.remove();
+  };
+
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+
+var cssTimeout = null;
+
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
+      }
+    }
+
+    cssTimeout = null;
+  }, 50);
+}
+
+module.exports = reloadCSS;
+},{"./bundle-url":"../node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var global = arguments[3];
+var OVERLAY_ID = '__parcel__error__overlay__';
+var OldModule = module.bundle.Module;
+
+function Module(moduleName) {
+  OldModule.call(this, moduleName);
+  this.hot = {
+    data: module.bundle.hotData,
+    _acceptCallbacks: [],
+    _disposeCallbacks: [],
+    accept: function (fn) {
+      this._acceptCallbacks.push(fn || function () {});
+    },
+    dispose: function (fn) {
+      this._disposeCallbacks.push(fn);
+    }
+  };
+  module.bundle.hotData = null;
+}
+
+module.bundle.Module = Module;
+var checkedAssets, assetsToAccept;
+var parent = module.bundle.parent;
+
+if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
+  var hostname = "" || location.hostname;
+  var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51147" + '/');
+
+  ws.onmessage = function (event) {
+    checkedAssets = {};
+    assetsToAccept = [];
+    var data = JSON.parse(event.data);
+
+    if (data.type === 'update') {
+      var handled = false;
+      data.assets.forEach(function (asset) {
+        if (!asset.isNew) {
+          var didAccept = hmrAcceptCheck(global.parcelRequire, asset.id);
+
+          if (didAccept) {
+            handled = true;
+          }
         }
+      }); // Enable HMR for CSS by default.
+
+      handled = handled || data.assets.every(function (asset) {
+        return asset.type === 'css' && asset.generated.js;
+      });
+
+      if (handled) {
+        console.clear();
+        data.assets.forEach(function (asset) {
+          hmrApply(global.parcelRequire, asset);
+        });
+        assetsToAccept.forEach(function (v) {
+          hmrAcceptRun(v[0], v[1]);
+        });
+      } else if (location.reload) {
+        // `location` global exists in a web worker context but lacks `.reload()` function.
+        location.reload();
+      }
     }
-    catch (err) {
-        console.error(err);
+
+    if (data.type === 'reload') {
+      ws.close();
+
+      ws.onclose = function () {
+        location.reload();
+      };
     }
-}
-if (navigator.requestMIDIAccess) {
-    request_midi();
-}
-function on_midi_message(message) {
-    let [command, note, velocity] = message.data;
-    switch (command & 0xf0) {
-        case 240:
-            break;
-        case 144: {
-            let button = $(`button.key[data-note="${note}"]`);
-            if (velocity > 0) {
-                play_note(note);
-                button && button.classList.add("pressed");
-            }
-            else {
-                button && button.classList.remove("pressed");
-            }
-        }
-        default:
-            console.log(command, note, velocity);
+
+    if (data.type === 'error-resolved') {
+      console.log('[parcel] ✨ Error resolved');
+      removeErrorOverlay();
     }
-}
-function $(selector) {
-    return document.querySelector(selector);
-}
-let noise_buffer;
-function lazy_noise_buffer(audio) {
-    if (!noise_buffer) {
-        noise_buffer = audio.createBuffer(1, audio.sampleRate * 2, audio.sampleRate);
-        let channel = noise_buffer.getChannelData(0);
-        for (var i = 0; i < channel.length; i++) {
-            channel[i] = Math.random() * 2 - 1;
-        }
+
+    if (data.type === 'error') {
+      console.error('[parcel] 🚨  ' + data.error.message + '\n' + data.error.stack);
+      removeErrorOverlay();
+      var overlay = createErrorOverlay(data);
+      document.body.appendChild(overlay);
     }
-    return noise_buffer;
+  };
 }
-//# sourceMappingURL=index.js.map
+
+function removeErrorOverlay() {
+  var overlay = document.getElementById(OVERLAY_ID);
+
+  if (overlay) {
+    overlay.remove();
+  }
+}
+
+function createErrorOverlay(data) {
+  var overlay = document.createElement('div');
+  overlay.id = OVERLAY_ID; // html encode message and stack trace
+
+  var message = document.createElement('div');
+  var stackTrace = document.createElement('pre');
+  message.innerText = data.error.message;
+  stackTrace.innerText = data.error.stack;
+  overlay.innerHTML = '<div style="background: black; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; opacity: 0.85; font-family: Menlo, Consolas, monospace; z-index: 9999;">' + '<span style="background: red; padding: 2px 4px; border-radius: 2px;">ERROR</span>' + '<span style="top: 2px; margin-left: 5px; position: relative;">🚨</span>' + '<div style="font-size: 18px; font-weight: bold; margin-top: 20px;">' + message.innerHTML + '</div>' + '<pre>' + stackTrace.innerHTML + '</pre>' + '</div>';
+  return overlay;
+}
+
+function getParents(bundle, id) {
+  var modules = bundle.modules;
+
+  if (!modules) {
+    return [];
+  }
+
+  var parents = [];
+  var k, d, dep;
+
+  for (k in modules) {
+    for (d in modules[k][1]) {
+      dep = modules[k][1][d];
+
+      if (dep === id || Array.isArray(dep) && dep[dep.length - 1] === id) {
+        parents.push(k);
+      }
+    }
+  }
+
+  if (bundle.parent) {
+    parents = parents.concat(getParents(bundle.parent, id));
+  }
+
+  return parents;
+}
+
+function hmrApply(bundle, asset) {
+  var modules = bundle.modules;
+
+  if (!modules) {
+    return;
+  }
+
+  if (modules[asset.id] || !bundle.parent) {
+    var fn = new Function('require', 'module', 'exports', asset.generated.js);
+    asset.isNew = !modules[asset.id];
+    modules[asset.id] = [fn, asset.deps];
+  } else if (bundle.parent) {
+    hmrApply(bundle.parent, asset);
+  }
+}
+
+function hmrAcceptCheck(bundle, id) {
+  var modules = bundle.modules;
+
+  if (!modules) {
+    return;
+  }
+
+  if (!modules[id] && bundle.parent) {
+    return hmrAcceptCheck(bundle.parent, id);
+  }
+
+  if (checkedAssets[id]) {
+    return;
+  }
+
+  checkedAssets[id] = true;
+  var cached = bundle.cache[id];
+  assetsToAccept.push([bundle, id]);
+
+  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+    return true;
+  }
+
+  return getParents(global.parcelRequire, id).some(function (id) {
+    return hmrAcceptCheck(global.parcelRequire, id);
+  });
+}
+
+function hmrAcceptRun(bundle, id) {
+  var cached = bundle.cache[id];
+  bundle.hotData = {};
+
+  if (cached) {
+    cached.hot.data = bundle.hotData;
+  }
+
+  if (cached && cached.hot && cached.hot._disposeCallbacks.length) {
+    cached.hot._disposeCallbacks.forEach(function (cb) {
+      cb(bundle.hotData);
+    });
+  }
+
+  delete bundle.cache[id];
+  bundle(id);
+  cached = bundle.cache[id];
+
+  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+    cached.hot._acceptCallbacks.forEach(function (cb) {
+      cb();
+    });
+
+    return true;
+  }
+}
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js"], null)
+//# sourceMappingURL=/index.js.map
